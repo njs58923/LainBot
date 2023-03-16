@@ -13,11 +13,11 @@ context = context.replace(/{{ai}}|{{system}}/g, (match) => {
 });
 
 const start_messages = [
-  { role: roles.ai, content: `{"init": {"type":"test.init"}}` },
-  { role: roles.system, content: `{"init": "OK"}` },
-  { role: roles.ai, content: `{"type":"command.powershell", "commad": "Get-Date"}}` },
-  { role: roles.system, content: `{"get time": {"result":"17:56:45"}}` },
-  { role: roles.ai, content: `{"#": {"type":"test.wait"}}` },
+  { role: roles.ai, content: `{"type":"ia.init"}` },
+  { role: roles.system, content: `{result: "OK"}` },
+  { role: roles.ai, content: `{"type":"command.powershell", "commad": "Get-Date"}` },
+  { role: roles.system, content: `{"result":"17:56:45"}` },
+  { role: roles.ai, content: `{"type":"ia.wait"}` },
 ];
 
 exports.build_messages = () => {
