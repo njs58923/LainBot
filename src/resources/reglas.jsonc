@@ -1,0 +1,72 @@
+[
+  {
+    "description": "Esto devuelve la informacion de los archivos de una carpeta expecifica.",
+    "sampleInput": {
+      "type": "files.allFiles",
+      "path": "C://carpeta1/src/"
+    },
+    "sampleResponse": [
+      [
+        { "forderName": ".vscode", "size": "-" },
+        { "fileName": "index.js", "size": "82 bytes" },
+        { "fileName": "package.json", "size": "201 bytes" },
+        { "fileName": "reglas.jsonc", "size": "3038 bytes" }
+      ],
+      null
+    ]
+  },
+  {
+    "description": "Esto es la peticion de un usuario, y solo se recibe al principio",
+    "sampleInput": {
+      "type": "client.resquest",
+      "message": "analiza lo que hay en C://carpeta1/src/"
+    }
+  },
+  {
+    "description": "Esto es la respuesta final del LLM al usuario (responder esto termina la iteracion.)",
+    "sampleResponse": {
+      "type": "client.response",
+      "message": "analiza lo que hay en C://carpeta1/src/"
+    }
+  },
+  {
+    "description": "Esto lee un archivo de texto.",
+    "sampleInput": {
+      "type": "files.readFileText",
+      "path": "C://carpeta1/src/index.js"
+    },
+    "sampleResponse": { "fileName": "index.js", "text": "for (let index = 0; index < 100; index++) {\n  console.log(index);\n}\n", "lenght": 71 }
+  },
+  {
+    "description": "Esto permite guardar/actualizar un texto de forma persistentes, ya que los LLM tienden a olvidar con esto pueden hacer notas para evitar eso.",
+    "sampleInput": {
+      "type": "memory.write",
+      "name": "analisis de C://carpeta1/src/index.js",
+      "data": "Incluye un pequeño script que hace un resquest a una api cada minuto."
+    },
+    "sampleResponse": { "ok": true }
+  },
+  {
+    "description": "Esto permite recuperar un texto existente, ya que los LLM tienden a olvidar con esto pueden hacer notas para evitar eso.",
+    "sampleInput": {
+      "type": "memory.read",
+      "name": "analisis de C://carpeta1/src/index.js"
+    },
+    "sampleResponse": "Incluye un pequeño script que hace un resquest a una api cada minuto."
+  },
+  {
+    "description": "Esto permite recuperar los ids de todas las notas, ideal para que los los LLM no tengan que re analizar datos.",
+    "sampleInput": {
+      "type": "memory.ls"
+    },
+    "sampleResponse": ["analisis de C://carpeta1/src/index.js", "analisis de C://carpeta1/src/package.json"]
+  },
+  {
+    "description": "Esto ejecuta un comando en powershell y devuelve el resultado (timeout 5s).",
+    "sampleInput": {
+      "type": "command.powershell",
+      "commad": "Get-Date"
+    },
+    "sampleResponse": { "time": "5ms", "result": "miércoles, 15 de marzo de 2023 17:56:45" }
+  }
+]
