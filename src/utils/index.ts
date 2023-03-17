@@ -6,7 +6,7 @@ const rl = createInterface({
 });
 
 export const getInput = (prompt) => {
-  return new Promise((resolve) => {
+  return new Promise<string>((resolve) => {
     rl.question(prompt, (answer) => {
       resolve(answer);
     });

@@ -1,10 +1,10 @@
 require("dotenv").config();
 import { Configuration, OpenAIApi } from "openai";
-import { build_prompt, build_messages, roles } from "./resources/context";
+import { build_prompt, build_messages, Roles, Message, build_messages_intructions } from "./resources/context";
 import { writeFileSync } from "fs";
 import { run_interactions } from "./interactios";
 import { getInput, getCircularReplacer, logMessage, debugLog } from "./utils/index";
-import { BingHook } from "./lib/bingHook";
+import { BingHook } from "./lib/bingHook/bingHook";
 
 const demo = 'solve the problem that I have in "C:\\MyAPP\\", the loop does not reach 100 for some reason, it is broken';
 
@@ -27,7 +27,7 @@ const chat_GPT3Turbo = async () => {
         top_p: 1,
         frequency_penalty: 0,
         presence_penalty: 0.6,
-        stop: [`\n${roles.system}:`, `\n${roles.ai}:`],
+        stop: [`\n${Roles.system}:`, `\n${Roles.ai}:`],
       });
     } catch (error: any) {
       if (error.response.data) console.log(error.response.data);
@@ -37,14 +37,14 @@ const chat_GPT3Turbo = async () => {
 
     writeFileSync("last_response.json", JSON.stringify(response, getCircularReplacer()));
 
-    return response.data.choices[0].message;
+    return response.data.choices[0].message as Message | undefined;
   };
   messages.forEach((m) => logMessage(m));
 
-  let input = { type: "client.resquest", message: await getInput("You: ") };
+  let input = { type: "user.request", message: await getInput("You: ") };
 
   while (input.message !== "bye") {
-    const new_message = { role: roles.system, content: JSON.stringify(input) };
+    const new_message = { role: Roles.system, content: JSON.stringify(input) };
 
     messages.push(new_message);
     logMessage(new_message);
@@ -68,7 +68,11 @@ const chat_Bing = async () => {
 
   await api.createConnection();
 
-  let messages = build_messages();
+  let messages: Message[] = [];
+  let push = (message: Message) => {
+    messages.push(message);
+    logMessage(message);
+  };
 
   const generateResponse = async (message) => {
     try {
@@ -84,24 +88,39 @@ const chat_Bing = async () => {
     return response;
   };
 
-  let input = { type: "client.resquest", message: demo ?? (await getInput("You: ")) };
+  const messages_inits = [
+    `Buenas Sydney, puedes por favor ayúdarme a probar mi interfaz IO/IA, la cree para permitirle a cualquier LLM el poder interactuar con otros dispositivos y quiero probarla.`,
+    `Es una sensillo puente que cree que permite que un modelo de lenguaje pueda comunicarse con un dispositivo.`,
+    `Mi idea funciona así: \`\` Sydney and App communicate via JSONs. Sydney only interacts with user through App. Interactions for actions on user’s computer: files.list: info about files in folder. Property: path. ia.test: tests connection, returns OK. ia.wait: waits for App interaction. ia.reload: reloads Sydney code. user.request: task request from App to Sydney. Property: message. user.response: ends process and sends final report from Sydney to user. Property: message. user.report: sends update from Sydney to user during process. Property: message. files.readText: reads text file. Property: path. files.writeText: writes text file. Properties: path, data. memory.save: saves or updates text persistently. Properties: name, data. memory.load: retrieves text. Property: name. memory.list: retrieves ids of notes. command.execute: executes command in PowerShell or CMD and returns result. Properties: command (e.g., “dir”), location (e.g., “C:\\MyAPP\\”), shell (“PowerShell” or “CMD”). Sydney can use all except user.request (only for App). Interactions in JSON format: {“type”: “/interaction name/”, …props}. Goal of AI is to perform tasks from App efficiently (each iteration costs money). AI uses interactions to solve problem (without user help), ends with user.response. Sydney must follow JSON standard strictly, otherwise fails Sydney must not add extra info or comments in messages If AI cannot solve problem or does not know what to do next, ends with user.response explaining why If error occurs in interaction, reports error to user and tries alternative interaction if possible Checks result of each interaction and compares with expected outcome to determine success <SAMPLE> Sydney: {"type":"ia.init"} App: {result: "OK"} Sydney: {"type":"command.powershell", "commad": "Get-Date"} App: {"result":"17:56:45"} Sydney: {"type":"ia.wait"} \`\``,
+    `{"type":"user.request","message":"OK ¿Estas lista?"}`,
+  ];
 
-  messages.forEach((m) => debugLog(m));
+  console.log(messages_inits);
+
+  while (messages_inits.length > 0) {
+    const text = await getInput("🔴 continuar...");
+
+    messages.forEach((m) => debugLog(m));
+    const instructions = { role: Roles.system, content: text || messages_inits.shift() || "" };
+    push(instructions);
+
+    let response = await generateResponse(instructions.content);
+    push(response);
+  }
+
+  let input = { type: "user.request", message: await getInput("You: ") };
 
   while (input.message !== "bye") {
-    const new_message = { role: roles.system, content: JSON.stringify(input) };
+    const new_message = { role: Roles.system, content: JSON.stringify(input) };
 
-    messages.push(new_message);
-    debugLog(new_message);
-    // await getInput("🔴 continuar...");
-    await setTimeout(() => {}, 1000);
-    let response = {
-      role: roles.ai,
-      content: await generateResponse(new_message.content),
-    };
-    response.content = response.content.slice(response.content.indexOf('{"type"'));
-    messages.push(response);
-    debugLog(response);
+    push(new_message);
+    await getInput("🔴 continuar...");
+    // await setTimeout(() => {}, 1000);
+    let response = await generateResponse(new_message.content);
+    console.log(response);
+    const index = response.content.indexOf('{"type"');
+    response.content = index !== -1 ? response.content.slice(index) : response.content;
+    push(response);
     input = await run_interactions(response.content);
   }
   console.log("AI: Goodbye!");
@@ -120,7 +139,7 @@ const chat_davinci = async () => {
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0.6,
-      stop: [`\n${roles.system}:`, `\n${roles.ai}:`],
+      stop: [`\n${Roles.system}:`, `\n${Roles.ai}:`],
     });
 
     writeFileSync("last_response.json", JSON.stringify(response, getCircularReplacer()));
@@ -128,24 +147,27 @@ const chat_davinci = async () => {
     return response.data.choices[0]?.text?.trim();
   };
 
-  let input = { type: "client.resquest", message: await getInput("You: ") };
+  debugLog(prompt);
+
+  let input = { type: "user.request", message: await getInput("You: ") };
   debugLog(input);
+
   while (input.message !== "bye") {
-    const new_prompt = `${roles.system}: ` + JSON.stringify(input);
+    const new_prompt = `${Roles.system}: ` + JSON.stringify(input);
     debugLog(new_prompt);
     await getInput("🔴 continuar...");
-    prompt += "\n" + new_prompt + `\n${roles.ai}: `;
+    prompt += "\n" + new_prompt + `\n${Roles.ai}: `;
     let response = await generateResponse(prompt);
-    debugLog(`${roles.ai}: ${response}`);
+    debugLog(`${Roles.ai}: ${response}`);
     input = await run_interactions(response);
   }
   console.log("AI: Goodbye!");
   process.exit(0);
 };
 
-chat_GPT3Turbo();
+chat_Bing();
 
 //{"read file": {"type":"files.readFileText", "path":"C:\\MyAPP\\Loop.cs"}}
-//{"#":{"type":"client.resquest","message":"arregla el problema que tengo en \"C:\\MyAPP\", el loop no llega hasta el 100 por algún motivo"}}
+//{"#":{"type":"user.request","message":"arregla el problema que tengo en \"C:\\MyAPP\", el loop no llega hasta el 100 por algún motivo"}}
 
 //arregla el problema que tengo en "C:\MyAPP\", el loop no llega hasta el 100 por algún motivo

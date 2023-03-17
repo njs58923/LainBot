@@ -1,51 +1,62 @@
 import { exec, spawn, ChildProcessWithoutNullStreams } from "child_process";
 import { readdirSync, readFileSync, writeFileSync } from "fs";
 import { getInput } from "./utils/index";
-
-let powershellProcess: ChildProcessWithoutNullStreams = null as any;
+import { cmd, powershell } from "./utils/execute";
 
 // Define the interactions that the AI can perform
 export const interactions = {
-  "files.allFiles": ({ path }) => {
-    const files = readdirSync(path);
-    return { files };
+  "files.list": ({ path }) => {
+    try {
+      const files = readdirSync(path);
+      return { files };
+    } catch (error: any) {
+      return { error: error.message };
+    }
   },
   "ia.init": () => {
-    return "OK";
+    return { status: "OK" };
   },
   "ia.wait": async ({}) => {
-    return { "#": { type: "client.resquest", message: await getInput("🟢 You: ") } };
+    return { type: "user.resquest", message: await getInput("🟢 You: ") };
   },
-  "client.request": async ({ message }) => {
+  "user.resquest": async ({ message }) => {
     console.log(`🟢 ${message}`);
     process.exit();
   },
-  "client.response": async ({ message }) => {
+  "user.response": async ({ message }) => {
     console.log(`🟢 ${message}`);
     process.exit();
   },
-  "client.report": ({ message }) => {
+  "user.report": ({ message }) => {
     console.log(`AI report: ${message}`);
     return {};
   },
-  "files.readFileText": ({ path }) => {
-    const data = readFileSync(path, "utf-8");
-    const result = {
-      data,
-      flap: () => (result.data = (result.data || "").slice(0, 16) + "..."),
-    };
-    return result;
+  "files.readText": ({ path }) => {
+    try {
+      const data = readFileSync(path, "utf-8");
+      const result = {
+        data,
+        flap: () => (result.data = (result.data || "").slice(0, 16) + "..."),
+      };
+      return result;
+    } catch (error: any) {
+      return { error: error.message };
+    }
   },
-  "files.writeFileText": ({ path, data }) => {
-    writeFileSync(path, data);
-    return { message: `File ${path} saved` };
+  "files.writeText": ({ path, data }) => {
+    try {
+      writeFileSync(path, data);
+      return { message: `File ${path} saved` };
+    } catch (error: any) {
+      return { error: error.message };
+    }
   },
-  "memory.write": ({ name, data }) => {
+  "memory.save": ({ name, data }) => {
     // Save or update text persistently
     writeFileSync(`./memory/${name}.txt`, data);
     return { message: `Note ${name} saved` };
   },
-  "memory.read": ({ name }) => {
+  "memory.load": ({ name }) => {
     // Retrieve existing text
     const data = readFileSync(`./memory/${name}.txt`, "utf-8");
     const result = {
@@ -54,66 +65,15 @@ export const interactions = {
     };
     return result;
   },
-  "memory.ls": () => {
+  "memory.list": () => {
     // Retrieve ids of all notes
     const notes = readdirSync("./memory");
     return { notes };
   },
-  "command.cmd": ({ command, location }) => {
-    // Execute a command in PowerShell and return the result
-    return new Promise((resolve, reject) => {
-      exec(`cmd.exe  ${command}`, { cwd: location }, (error, stdout, stderr) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        resolve({ result: stdout.trim() });
-      });
-    });
-  },
-  "command.powershell": ({ command, location }) => {
-    command = command.replace(/\\/g, "\\\\");
-    // location = location?.replace(/\\/g, "\\\\");
-
-    if (!powershellProcess) {
-      powershellProcess = spawn(`powershell.exe`, ["-ExecutionPolicy", "Bypass", "-NoExit", "-Command", "-"]);
-      if (location) powershellProcess.stdin.write(`cd "${location}"\n`);
-    }
-    let output = "";
-
-    return new Promise((resolve, reject) => {
-      const code = setTimeout(() => {
-        if (output) return resolve({ result: output?.trim() || "" });
-        reject(new Error("timeout(15s)"));
-      }, 10000);
-
-      const code2 = setTimeout(() => {
-        if (output === "") return resolve({ result: "" });
-      }, 2500);
-
-      powershellProcess.stdout.on("data", (data, data2) => {
-        clearTimeout(code2);
-        output += data.toString("utf8");
-      });
-
-      powershellProcess.stderr.on("data", (data) => {
-        clearTimeout(code2);
-        reject(new Error(data.toString("utf8")));
-      });
-
-      powershellProcess.on("exit", () => {
-        clearTimeout(code);
-        clearTimeout(code2);
-        resolve({ result: output?.trim() || "" });
-      });
-      powershellProcess.on("close", () => {
-        clearTimeout(code);
-        clearTimeout(code2);
-        resolve({ result: output?.trim() || "" });
-      });
-
-      powershellProcess.stdin.write(`${command}\r\n`);
-    }).catch((err) => ({ error: err.message }));
+  "command.execute": ({ command, location, shell }) => {
+    if (shell === "PowerShell") return powershell({ command, location });
+    if (shell === "CMD") return cmd({ command, location });
+    return { error: `The value ${shell} in shell not is valid.` };
   },
 };
 
@@ -121,10 +81,10 @@ export const run_interactions = async (interaction) => {
   try {
     interaction = JSON.parse(interaction);
   } catch (error) {
-    return { "#": { error: `Format of interations not valid, requered alone valid JSON and you must respect the following format: {"type":"xxx", ...props}` } };
+    return { error: `Format of interations not valid, requered alone valid JSON and you must respect the following format: {"type":"xxx", ...props}` };
   }
 
-  if (typeof interaction !== "object") return { "#": { error: "Format of interations not valid, requered object." } };
+  if (typeof interaction !== "object") return { error: "Format of interations not valid, requered object." };
 
   const result = (
     await Promise.all(
