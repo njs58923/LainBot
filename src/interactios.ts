@@ -3,6 +3,9 @@ import { readdirSync, readFileSync, writeFileSync } from "fs";
 import { getInput } from "./utils/index";
 import { cmd, powershell } from "./utils/execute";
 
+export type InteractionRaw = string;
+export type Interaction = { type: string } & Record<string, unknown>;
+
 // Define the interactions that the AI can perform
 export const interactions = {
   "files.list": ({ path }) => {
@@ -77,9 +80,13 @@ export const interactions = {
   },
 };
 
-export const run_interactions = async (interaction) => {
+export const CreateResquest = (message: string) => {
+  return { type: "user.resquest", message };
+};
+
+export const TryRunInteraction = async (raw: Interaction | InteractionRaw) => {
   try {
-    interaction = JSON.parse(interaction);
+    var interaction = typeof raw === "string" ? (JSON.parse(raw) as Interaction) : raw;
   } catch (error) {
     return { error: `Format of interations not valid, requered alone valid JSON and you must respect the following format: {"type":"xxx", ...props}` };
   }

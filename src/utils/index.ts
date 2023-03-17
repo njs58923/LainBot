@@ -1,4 +1,5 @@
 import { createInterface } from "readline";
+import { Message } from "../resources/context";
 
 const rl = createInterface({
   input: process.stdin,
@@ -35,4 +36,8 @@ export const debugLog = (...args) => {
 
 export const logMessage = ({ role, content }) => {
   debugLog(`${role}: ${content}`);
+};
+
+export const M = (role, content): Message => {
+  return { role, content };
 };

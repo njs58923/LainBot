@@ -7,8 +7,8 @@ export const Roles = { ai: "TU", system: "App", context: "system" } as const;
 type ValuesOf<T> = T[keyof T];
 export type RolesNames = ValuesOf<typeof Roles>;
 
-export type Message = {
-  role: string;
+export type Message<T = string> = {
+  role: T;
   content: string;
 };
 
