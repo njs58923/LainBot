@@ -18,7 +18,10 @@ const generateResponse = async (message) => {
     throw error;
   }
 
-  writeFileSync("last_response.json", JSON.stringify(response, getCircularReplacer()));
+  writeFileSync(
+    "last_response.json",
+    JSON.stringify(response, getCircularReplacer())
+  );
 
   return response;
 };
@@ -30,7 +33,10 @@ export const ChatGPT = async () => {
 
   const roles = new Roles({ ai: "AI", system: "App", context: "system" });
 
-  const controller = new AloneChatResponse((msg) => generateResponse(msg), { debug: true, roles });
+  const controller = new AloneChatResponse((msg) => generateResponse(msg), {
+    debug: true,
+    roles,
+  });
 
   let messages_inits: string[] = [];
 

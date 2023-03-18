@@ -36,9 +36,19 @@ export class BuildContext {
   context: string;
   roles: Roles;
   samples: Message<string>[];
-  constructor({ context, roles, samples }: { context: string; roles: Roles; samples: Message[] }) {
+  constructor({
+    context,
+    roles,
+    samples,
+  }: {
+    context: string;
+    roles: Roles;
+    samples: Message[];
+  }) {
     this.roles = roles;
-    this.samples = samples.map((s) => (s.content = this.roles.replace(s.content)));
+    this.samples = samples.map(
+      (s) => (s.content = this.roles.replace(s.content))
+    );
     this.context = this.roles.replace(read(context));
   }
 
@@ -54,7 +64,9 @@ export class BuildContext {
     return M(this.roles.v.system, this.context);
   }
   build_unique_prompt = () => {
-    return `${this.context}\n\n${this.samples.map((m) => `${m.role}: ${m.content}`).join("\n")}`;
+    return `${this.context}\n\n${this.samples
+      .map((m) => `${m.role}: ${m.content}`)
+      .join("\n")}`;
   };
 }
 

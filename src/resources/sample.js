@@ -4,7 +4,8 @@
     raw: {
       "#": {
         type: "user.resquest",
-        message: 'arregla el problema que tengo en "C:\\MyAPP", el loop no llega hasta el 100 por algún motivo',
+        message:
+          'arregla el problema que tengo en "C:\\MyAPP", el loop no llega hasta el 100 por algún motivo',
       },
     },
     raw: `{"#":{"type":"user.resquest","message":"arregla el problema que tengo en \"C:\\MyAPP\", el loop no llega hasta el 100 por algún motivo"}}`,

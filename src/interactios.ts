@@ -86,21 +86,37 @@ export const CreateResquest = (message: string) => {
 
 export const TryRunInteraction = async (raw: Interaction | InteractionRaw) => {
   try {
-    var interaction = typeof raw === "string" ? (JSON.parse(raw) as Interaction) : raw;
+    var interaction =
+      typeof raw === "string" ? (JSON.parse(raw) as Interaction) : raw;
   } catch (error) {
-    return { error: `Format of interations not valid, requered alone valid JSON and you must respect the following format: {"type":"xxx", ...props}` };
+    return {
+      error: `Format of interations not valid, requered alone valid JSON and you must respect the following format: {"type":"xxx", ...props}`,
+    };
   }
 
-  if (typeof interaction !== "object") return { error: "Format of interations not valid, requered object." };
+  if (typeof interaction !== "object")
+    return { error: "Format of interations not valid, requered object." };
 
   const result = (
     await Promise.all(
       Object.entries({ interaction }).map(async ([key, value]) => {
-        if (typeof value !== "object") return [key, { error: `Invalid interaction, you must respect the following format: {"type":"xxx", ...props}` }];
+        if (typeof value !== "object")
+          return [
+            key,
+            {
+              error: `Invalid interaction, you must respect the following format: {"type":"xxx", ...props}`,
+            },
+          ];
 
         const { type, ...properties } = interaction;
 
-        if (!interactions[type]) return [key, { error: `Interaction type "${type}" not supported, you must respect the following format: {"type":"xxx", ...props}` }];
+        if (!interactions[type])
+          return [
+            key,
+            {
+              error: `Interaction type "${type}" not supported, you must respect the following format: {"type":"xxx", ...props}`,
+            },
+          ];
 
         try {
           return [key, await interactions[type](properties)];

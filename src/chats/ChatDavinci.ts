@@ -7,7 +7,11 @@ import { OpenAI } from "./utils/OpenAI";
 
 export const roles = new Roles({ ai: "AI", system: "App", context: "system" });
 
-const ctx = new BuildContext({ context: "context", roles, samples: Samples.simple(roles) });
+const ctx = new BuildContext({
+  context: "context",
+  roles,
+  samples: Samples.simple(roles),
+});
 
 const generateResponse = async (prompt) => {
   const response = await OpenAI.createCompletion({
@@ -21,7 +25,10 @@ const generateResponse = async (prompt) => {
     stop: [`\n${roles.v.system}:`, `\n${roles.v.ai}:`],
   });
 
-  writeFileSync("last_response.json", JSON.stringify(response, getCircularReplacer()));
+  writeFileSync(
+    "last_response.json",
+    JSON.stringify(response, getCircularReplacer())
+  );
 
   return response.data.choices[0]?.text?.trim();
 };

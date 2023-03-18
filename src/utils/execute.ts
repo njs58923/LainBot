@@ -28,7 +28,12 @@ export const powershell = ({ command, location }) => {
       .invoke(`${command}`)
       .then((output) => {
         clearTimeout(code);
-        resolve({ result: output.raw || "", startTime: output.startTime, duration: output.duration, hadErrors: output.hadErrors });
+        resolve({
+          result: output.raw || "",
+          startTime: output.startTime,
+          duration: output.duration,
+          hadErrors: output.hadErrors,
+        });
       })
       .catch((err) => {
         clearTimeout(code);
@@ -62,7 +67,12 @@ export const cmd = ({ command, location }) => {
       .invoke(`${command}`)
       .then((output) => {
         clearTimeout(code);
-        resolve({ result: output.raw || "", startTime: output.startTime, duration: output.duration, hadErrors: output.hadErrors });
+        resolve({
+          result: output.raw || "",
+          startTime: output.startTime,
+          duration: output.duration,
+          hadErrors: output.hadErrors,
+        });
       })
       .catch((err) => {
         clearTimeout(code);

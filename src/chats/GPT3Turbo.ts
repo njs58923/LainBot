@@ -7,7 +7,10 @@ import { getCircularReplacer, logMessage, getInput, M } from "../utils";
 import { AloneChatResponse } from "./utils/AloneChatResponse";
 import { OpenAI } from "./utils/OpenAI";
 
-const generateResponse = async (roles: Roles, messages: ChatCompletionRequestMessage[]) => {
+const generateResponse = async (
+  roles: Roles,
+  messages: ChatCompletionRequestMessage[]
+) => {
   try {
     var response = await OpenAI.createChatCompletion({
       model: "gpt-3.5-turbo",
@@ -25,7 +28,10 @@ const generateResponse = async (roles: Roles, messages: ChatCompletionRequestMes
     throw error;
   }
 
-  writeFileSync("last_response.json", JSON.stringify(response, getCircularReplacer()));
+  writeFileSync(
+    "last_response.json",
+    JSON.stringify(response, getCircularReplacer())
+  );
 
   return response.data.choices[0].message as Message | undefined;
 };
@@ -33,9 +39,17 @@ const generateResponse = async (roles: Roles, messages: ChatCompletionRequestMes
 export const GPT3Turbo = async () => {
   const roles = new Roles({ ai: "AI", system: "App", context: "system" });
 
-  const ctx = new BuildContext({ context: "context2", roles, samples: Samples.simple(roles) });
+  const ctx = new BuildContext({
+    context: "context2",
+    roles,
+    samples: Samples.simple(roles),
+  });
 
-  const controller = new AloneChatResponse((msg, list) => generateResponse(roles, list as any).then((i) => i?.content || ""), { debug: true, roles, initMessages: ctx.build_messages() });
+  const controller = new AloneChatResponse(
+    (msg, list) =>
+      generateResponse(roles, list as any).then((i) => i?.content || ""),
+    { debug: true, roles, initMessages: ctx.build_messages() }
+  );
 
   controller.list.forEach((m) => logMessage(m));
 

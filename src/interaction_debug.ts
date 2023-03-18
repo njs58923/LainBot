@@ -8,12 +8,12 @@ var interaction_debug = async () => {
     text = `Okay, let's use the \`files.list\` interaction to get information about the files in the folder \`C:\\AI Projects\\New folder\`. Here's the interaction message:
 
     \`\`\`
-    { 
-      "type": "files.list", 
+    {
+      "type": "files.list",
       "path": "C:\\AI Projects\\New folder"
     }
     \`\`\`
-    
+
     You should send this message to me as App, and I'll respond with a message containing information about the files in the specified folder.`;
 
     const regex = text.match(/\`\`\`([^]*)\`\`\`/);

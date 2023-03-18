@@ -7,7 +7,14 @@ export class AloneChatResponse {
   fistInput = false;
   debug = false;
   roles: Roles;
-  constructor(public generate: (text: string, list: Message[]) => Promise<string>, { debug = false, roles, initMessages = [] }: { debug?: boolean; roles: Roles; initMessages?: Message[] }) {
+  constructor(
+    public generate: (text: string, list: Message[]) => Promise<string>,
+    {
+      debug = false,
+      roles,
+      initMessages = [],
+    }: { debug?: boolean; roles: Roles; initMessages?: Message[] }
+  ) {
     this.debug = debug;
     this.roles = roles;
     this.list = initMessages;
@@ -17,7 +24,11 @@ export class AloneChatResponse {
     this.push(m);
 
     if (this.debug && !this.fistInput) {
-      const opt = (await getInput(`🔴 Debug: \n -1: omitir\n -2: editar\n -3: salir\noption: `)).toLocaleLowerCase();
+      const opt = (
+        await getInput(
+          `🔴 Debug: \n -1: omitir\n -2: editar\n -3: salir\noption: `
+        )
+      ).toLocaleLowerCase();
       if (opt === "1") return undefined;
       if (opt === "2") {
         const p = await getInput("Nuevo prompt(Nada para cancelar)");
@@ -50,7 +61,10 @@ export class AloneChatResponse {
     }
   }
 
-  async tryLoopInput(getProndt: () => Promise<string | undefined>, result: (result) => Promise<void>) {
+  async tryLoopInput(
+    getProndt: () => Promise<string | undefined>,
+    result: (result) => Promise<void>
+  ) {
     while (true) {
       const input = await getProndt();
       if (!input) break;
