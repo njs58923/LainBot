@@ -68,7 +68,7 @@ export class BuildContext {
     return M(this.roles.v.system, this.context);
   }
 
-  build_unique_prompt = (style: ":" | "#") => {
+  build_unique_prompt = (style: ":" | "#" | "###") => {
     if (style === ":")
       return `${this.context}\n\n${this.samples
         .map((m) => `${m.role}: ${m.content}`)
@@ -76,6 +76,10 @@ export class BuildContext {
     if (style === "#")
       return `${this.context}\n\n${this.samples
         .map((m) => `# ${m.role}:\n${m.content}\n`)
+        .join("\n")}`;
+    if (style === "###")
+      return `${this.context}\n\n${this.samples
+        .map((m) => `### ${m.role}:\n${m.content}\n`)
         .join("\n")}`;
     throw 0;
   };

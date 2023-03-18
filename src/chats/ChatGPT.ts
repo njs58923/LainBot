@@ -50,7 +50,9 @@ export const ChatGPT = async () => {
   });
 
   await controller.tryAutoGenerate(
-    roles.replaceAll(...SampleInits["traslate this"](ctx.context))
+    roles.replaceAll(
+      ...SampleInits["traslate this"](ctx.context, { chatName: "chatbot" })
+    )
   );
 
   let input = CreateResquest(await getInput("You: "));

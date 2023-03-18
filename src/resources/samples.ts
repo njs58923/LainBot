@@ -25,8 +25,10 @@ export const SampleInits = {
     `this second part of the doc: \`\`{{D}} can use all except user.request (only for {{S}}). Interactions in JSON format: {"type": "/interaction name/", …props}. Goal of AI is to perform tasks from {{S}} efficiently (each iteration costs money). AI uses interactions to solve problem (without user help), ends with user.response. {{D}} must follow JSON standard strictly, otherwise fails {{D}} must not add extra info or comments in messages If AI cannot solve problem or does not know what to do next, ends with user.response explaining why If error occurs in interaction, reports error to user and tries alternative interaction if possible Checks result of each interaction and compares with expected outcome to determine success <SAMPLE> {{D}}: {"type":"ia.init"} {{S}}: {result: "OK"} {{D}}: {"type":"command.powershell", "commad": "Get-Date"} {{S}}: {"result":"17:56:45"} {{D}}: {"type":"ia.wait"}\`\``,
     `{"type":"user.request","message":"i need analyze what's in this folder C:\\\\AI Projects\\\\New folder"}, this is for that`,
   ],
-  "traslate this": (context: string) => [
-    "buenas bing, me traduces esto al español\n\n" +
+  "traslate this": (context: string, { chatName }) => [
+    "buenas " +
+      chatName +
+      ", me traduces esto al español\n\n" +
       context +
       "\n\npd: no traduscas los nombres de las interaciones, ni las key de los props.",
     "y que hace?",

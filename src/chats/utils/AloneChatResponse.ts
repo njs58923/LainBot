@@ -30,7 +30,7 @@ export class AloneChatResponse {
         await getInput(
           `🔴 Debug: ${
             m.content.split(/\W+/).length * 1.33
-          } tokens \n   1: omitir\n   2: editar\n   3: simulate\n   4: salir\n  option: `
+          } tokens \n   1: omitir\n   2: editar\n   3: simulate(End)\n   4: simulate\n   5: salir\n  option: `
         )
       ).toLocaleLowerCase();
       console.log("\n");
@@ -40,9 +40,10 @@ export class AloneChatResponse {
         const p = await getInput("Nuevo prompt(Nada para cancelar): ");
         if (p) m.content = p;
       }
-      if (opt === "3")
+      if (opt === "3") return `{ type: "user.request", message: "END" }`;
+      if (opt === "4")
         fake = await getInput("Fake response(Nada para cancelar): ");
-      if (opt === "4") return undefined;
+      if (opt === "5") return undefined;
     }
     this.fistInput = false;
 

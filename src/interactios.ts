@@ -27,8 +27,8 @@ export const interactions = {
     process.exit();
   },
   "user.response": async ({ message }) => {
-    console.log(`🟢 ${message}`);
-    process.exit();
+    console.log(`🟦 ${message}`);
+    return { type: "user.request", message: await getInput("🟢 You: ") };
   },
   "user.report": ({ message }) => {
     console.log(`AI report: ${message}`);
@@ -132,6 +132,8 @@ export const TryRunInteraction = async (raw: Interaction | InteractionRaw) => {
 };
 
 export const TryRepairInteraction = (raw: string) => {
+  raw = raw.trim();
+  raw = raw.replace(/“|”/g, '"');
   const index = raw.indexOf('{"type"');
   raw = index !== -1 ? raw.slice(index) : raw;
   const regex = raw.match(/\`\`\`([^]*)\`\`\`/);

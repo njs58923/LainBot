@@ -16,13 +16,9 @@ import {
 } from "../utils";
 import { AloneChatResponse } from "./utils/AloneChatResponse";
 
-const api = new BingHook({
-  port: 3000,
-});
-
 const generateResponse = async (message: string) => {
   try {
-    var response = await api.sendMessage(message);
+    var response = "aaa";
   } catch (error: any) {
     if (error?.response?.data) console.log(error?.response?.data);
     else console.log(error);
@@ -37,14 +33,10 @@ const generateResponse = async (message: string) => {
   return response;
 };
 
-export const ChatBing = async () => {
-  await api.createConnection({
-    browserURL: "http://127.0.0.1:21222",
-  });
-
+export const Alpaca = async () => {
   const roles = new Roles({
-    ai: "IA",
-    system: "App",
+    ai: "Response",
+    system: "Input",
     context: "system",
   });
 
@@ -59,25 +51,16 @@ export const ChatBing = async () => {
     roles,
   });
 
-  await controller.tryAutoGenerate(
-    roles.replaceAll(
-      ...SampleInits["traslate this"](ctx.build_unique_prompt(":"), {
-        chatName: "Bing",
-      })
-    )
+  const initMessages = roles.replaceAll(
+    ...SampleInits["traslate this"](ctx.build_unique_prompt("###"), {
+      chatName: "chatbot",
+    })
   );
 
-  let input = CreateResquest(await getInput("You: "));
-
-  await controller.tryLoopInput(
-    async () => {
-      return JSON.stringify(input);
-    },
-    async (raw) => {
-      input = await TryRunInteraction(TryRepairInteraction(raw));
-    }
-  );
-  await getInput("🟦🟦🟦 FIN 🟦🟦🟦");
+  initMessages.forEach((i, ix) => {
+    if (ix > 0) console.log("");
+    console.log(i);
+  });
 
   process.exit(0);
 };
