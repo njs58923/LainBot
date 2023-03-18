@@ -1,6 +1,7 @@
 import { writeFileSync } from "fs";
 import { CreateResquest, TryRunInteraction } from "../interactios";
 import { ChatGPTHook } from "../lib/bingHook/chatGPTHook";
+import { Roles } from "../resources/context";
 import { getCircularReplacer, getInput } from "../utils";
 import { AloneChatResponse } from "./utils/AloneChatResponse";
 
@@ -27,7 +28,9 @@ export const ChatGPT = async () => {
     browserURL: "http://127.0.0.1:21222",
   });
 
-  const bing = new AloneChatResponse((msg) => generateResponse(msg), { debug: true });
+  const roles = new Roles({ ai: "AI", system: "App", context: "system" });
+
+  const controller = new AloneChatResponse((msg) => generateResponse(msg), { debug: true, roles });
 
   let messages_inits: string[] = [];
 
@@ -53,7 +56,7 @@ export const ChatGPT = async () => {
 
   let input = CreateResquest(await getInput("You: "));
 
-  await bing.tryLoopInput(
+  await controller.tryLoopInput(
     async () => {
       return JSON.stringify(input);
     },

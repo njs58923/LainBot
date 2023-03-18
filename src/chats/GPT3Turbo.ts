@@ -1,15 +1,13 @@
 import { writeFileSync } from "fs";
-import { TryRunInteraction } from "../interactios";
-import { Context, Message } from "../resources/context";
+import { ChatCompletionRequestMessage } from "openai";
+import { CreateResquest, TryRunInteraction } from "../interactios";
+import { BuildContext, Message, Roles } from "../resources/context";
 import { Samples } from "../resources/samples";
-import { getCircularReplacer, logMessage, getInput } from "../utils";
+import { getCircularReplacer, logMessage, getInput, M } from "../utils";
+import { AloneChatResponse } from "./utils/AloneChatResponse";
 import { OpenAI } from "./utils/OpenAI";
 
-export const roles = { ai: "AI", system: "App", context: "system" } as const;
-
-const ctx = new Context({ context: "context", roles, samples: Samples.simple(roles) });
-
-const GenerateResponse = async (messages) => {
+const generateResponse = async (roles: Roles, messages: ChatCompletionRequestMessage[]) => {
   try {
     var response = await OpenAI.createChatCompletion({
       model: "gpt-3.5-turbo",
@@ -19,7 +17,7 @@ const GenerateResponse = async (messages) => {
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0.6,
-      stop: [`\n${roles.system}:`, `\n${roles.ai}:`],
+      stop: [`\n${roles.v.system}:`, `\n${roles.v.ai}:`],
     });
   } catch (error: any) {
     if (error.response.data) console.log(error.response.data);
@@ -33,26 +31,27 @@ const GenerateResponse = async (messages) => {
 };
 
 export const GPT3Turbo = async () => {
-  let messages = ctx.build_messages();
+  const roles = new Roles({ ai: "AI", system: "App", context: "system" });
 
-  messages.forEach((m) => logMessage(m));
+  const ctx = new BuildContext({ context: "context2", roles, samples: Samples.simple(roles) });
 
-  let input = { type: "user.request", message: await getInput("You: ") };
+  const controller = new AloneChatResponse((msg, list) => generateResponse(roles, list as any).then((i) => i?.content || ""), { debug: true, roles, initMessages: ctx.build_messages() });
 
-  while (input.message !== "bye") {
-    const new_message = { role: ctx.roles.system, content: JSON.stringify(input) };
+  controller.list.forEach((m) => logMessage(m));
 
-    messages.push(new_message);
-    logMessage(new_message);
-    // await getInput("🔴 continuar...");
-    await setTimeout(() => {}, 1000);
-    let response = await GenerateResponse(messages);
-    if (!response) throw new Error("JY1uT");
-    response.content = response.content.slice(response.content.indexOf('{"type"'));
-    messages.push(response);
-    logMessage(response);
-    input = await TryRunInteraction(response.content);
-  }
-  console.log("AI: Goodbye!");
+  let input = CreateResquest(await getInput("You: "));
+
+  await controller.tryLoopInput(
+    async () => {
+      return JSON.stringify(input);
+    },
+    async (raw) => {
+      const index = raw.indexOf('{"type"');
+      raw = index !== -1 ? raw.slice(index) : raw;
+      input = await TryRunInteraction(raw);
+    }
+  );
+  await getInput("🟦🟦🟦 FIN 🟦🟦🟦");
+
   process.exit(0);
 };

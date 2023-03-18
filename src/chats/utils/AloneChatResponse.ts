@@ -1,16 +1,19 @@
 import { CreateResquest, TryRunInteraction } from "../../interactios";
-import { Message, Roles } from "../../resources/context";
+import { Message, Roles, RolesType } from "../../resources/context";
 import { M, logMessage, debugLog, getInput } from "../../utils";
 
 export class AloneChatResponse {
   list: Message[] = [];
   fistInput = false;
   debug = false;
-  constructor(public generate: (text: string) => Promise<string>, { debug = false } = {}) {
+  roles: Roles;
+  constructor(public generate: (text: string, list: Message[]) => Promise<string>, { debug = false, roles, initMessages = [] }: { debug?: boolean; roles: Roles; initMessages?: Message[] }) {
     this.debug = debug;
+    this.roles = roles;
+    this.list = initMessages;
   }
   async tryGenerate(text: string) {
-    const m = M(Roles.system, text);
+    const m = M(this.roles.v.system, text);
     this.push(m);
 
     if (this.debug && !this.fistInput) {
@@ -24,9 +27,9 @@ export class AloneChatResponse {
     }
     this.fistInput = false;
 
-    const r = await this.generate(m.content);
+    const r = await this.generate(m.content, this.list);
 
-    this.push(M(Roles.ai, r));
+    this.push(M(this.roles.v.ai, r));
     return r;
   }
 
@@ -40,7 +43,7 @@ export class AloneChatResponse {
     while (list.length > 0) {
       const text = list.shift();
       if (!text) break;
-      const m = M(Roles.system, text);
+      const m = M(this.roles.v.system, text);
       const replace = hook ? await hook(text) : null;
       this.list.forEach((m) => debugLog(m));
       if (replace || m.content) this.tryGenerate(replace || m.content);
