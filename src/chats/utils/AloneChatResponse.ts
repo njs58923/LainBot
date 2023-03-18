@@ -23,27 +23,30 @@ export class AloneChatResponse {
     const m = M(this.roles.v.system, text);
     this.push(m);
 
+    var fake;
     if (this.debug && !this.fistInput) {
       console.log("\n");
       const opt = (
         await getInput(
           `🔴 Debug: ${
             m.content.split(/\W+/).length * 1.33
-          } tokens \n   1: omitir\n   2: editar\n   3: salir\n  option: `
+          } tokens \n   1: omitir\n   2: editar\n   3: simulate\n   4: salir\n  option: `
         )
       ).toLocaleLowerCase();
       console.log("\n");
 
       if (opt === "1") return undefined;
       if (opt === "2") {
-        const p = await getInput("Nuevo prompt(Nada para cancelar)");
+        const p = await getInput("Nuevo prompt(Nada para cancelar): ");
         if (p) m.content = p;
       }
-      if (opt === "3") return undefined;
+      if (opt === "3")
+        fake = await getInput("Fake response(Nada para cancelar): ");
+      if (opt === "4") return undefined;
     }
     this.fistInput = false;
 
-    const r = await this.generate(m.content, this.list);
+    const r = fake || (await this.generate(m.content, this.list));
 
     this.push(M(this.roles.v.ai, r));
     return r;
