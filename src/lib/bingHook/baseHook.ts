@@ -1,5 +1,6 @@
 import puppeteer, { Browser, Page } from "puppeteer";
 import fs from "fs";
+import { debugLog } from "../../utils";
 
 export class BaseHook {
   constructor(public setting: { port: number }) {}
@@ -22,19 +23,24 @@ export class BaseHook {
 
   async createConnection({ browserURL, goto }) {
     const connect = async () => {
-      this.browser = await puppeteer.connect({ browserURL });
-      this.page = await this.browser.newPage();
-      await this.page.goto(goto);
-      await this.inyectFile("node_modules/tslib/tslib.js");
-      await new Promise((r) => setTimeout(r, 500 + Math.random()));
-      await this.inyectFile("src/lib/bingHook/inyect/dist/bundle.js");
-
+      this.browser = await puppeteer.connect({ browserURL, defaultViewport: null });
+      let pages = await this.browser.pages();
+      const allPages = pages.map((p) => ({ page: p, url: p.url() }));
+      const existPage = allPages.find((i) => i.url === goto)?.page;
+      if (existPage) {
+        this.page = existPage;
+      } else {
+        this.page = await this.browser.newPage();
+        this.page.goto(goto);
+      }
+      const hasInyect = await this.page.evaluate("window.inyectOk");
+      if (!hasInyect) {
+        await this.inyectFile("node_modules/tslib/tslib.js");
+        await new Promise((r) => setTimeout(r, 500 + Math.random()));
+        await this.inyectFile("src/lib/bingHook/inyect/dist/bundle.js");
+      }
       this.exposeFunction();
-
-      console.log("Loading node_modules/tslib/tslib.js");
-      await this.evaluate("await chatBing.waitLoading()");
-      console.log("🟢 node_modules/tslib/tslib.js");
-      console.log("");
+      return { hasInyect };
     };
 
     while (true) {
@@ -53,6 +59,9 @@ export class BaseHook {
       if (!this.promises[id]) return;
       this.promises[id].e(...args);
       delete this.promises[id];
+    });
+    this.page.exposeFunction(`page_log`, (...args) => {
+      debugLog(...args);
     });
     this.page.exposeFunction(`page_type`, async (query, text) => {
       await this.page.type(query, text);

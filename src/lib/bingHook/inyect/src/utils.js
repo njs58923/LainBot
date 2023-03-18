@@ -23,6 +23,15 @@ window.waitNotForSelector = async (select, { timeout } = {}) => {
   }
 };
 
+window.findFiber = (div) => {
+  const key = Object.keys(div).find((i) => i.indexOf("__reactFiber") === 0);
+  return div[key];
+};
+window.findProps = (div) => {
+  const key = Object.keys(div).find((i) => i.indexOf("__reactProps") === 0);
+  return div[key];
+};
+
 export const querySelector = window.querySelector;
 export const waitForSelector = window.waitForSelector;
 export const waitNotForSelector = window.waitNotForSelector;
