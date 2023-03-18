@@ -1,7 +1,6 @@
 import { writeFileSync } from "fs";
 import { CreateResquest, TryRunInteraction } from "../interactios";
 import { BingHook } from "../lib/bingHook/bingHook";
-import { Message, Roles, RolesNames } from "../resources/context";
 import { logMessage, getCircularReplacer, getInput, debugLog, M } from "../utils";
 import { AloneChatResponse } from "./utils/AloneChatResponse";
 

@@ -1,8 +1,13 @@
 import { writeFileSync } from "fs";
 import { TryRunInteraction } from "../interactios";
-import { build_messages, Message, Roles } from "../resources/context";
+import { Context, Message } from "../resources/context";
+import { Samples } from "../resources/samples";
 import { getCircularReplacer, logMessage, getInput } from "../utils";
 import { OpenAI } from "./utils/OpenAI";
+
+export const roles = { ai: "AI", system: "App", context: "system" } as const;
+
+const ctx = new Context({ context: "context", roles, samples: Samples.simple(roles) });
 
 const GenerateResponse = async (messages) => {
   try {
@@ -14,7 +19,7 @@ const GenerateResponse = async (messages) => {
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0.6,
-      stop: [`\n${Roles.system}:`, `\n${Roles.ai}:`],
+      stop: [`\n${roles.system}:`, `\n${roles.ai}:`],
     });
   } catch (error: any) {
     if (error.response.data) console.log(error.response.data);
@@ -28,14 +33,14 @@ const GenerateResponse = async (messages) => {
 };
 
 export const GPT3Turbo = async () => {
-  let messages = build_messages();
+  let messages = ctx.build_messages();
 
   messages.forEach((m) => logMessage(m));
 
   let input = { type: "user.request", message: await getInput("You: ") };
 
   while (input.message !== "bye") {
-    const new_message = { role: Roles.system, content: JSON.stringify(input) };
+    const new_message = { role: ctx.roles.system, content: JSON.stringify(input) };
 
     messages.push(new_message);
     logMessage(new_message);
