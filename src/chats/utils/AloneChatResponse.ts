@@ -4,11 +4,28 @@ import { M, logMessage, debugLog, getInput } from "../../utils";
 
 export class AloneChatResponse {
   list: Message[] = [];
-  constructor(public generate: (text: string) => Promise<string>) {}
+  fistInput = false;
+  debug = false;
+  constructor(public generate: (text: string) => Promise<string>, { debug = false } = {}) {
+    this.debug = debug;
+  }
   async tryGenerate(text: string) {
     const m = M(Roles.system, text);
     this.push(m);
+
+    if (this.debug && !this.fistInput) {
+      const opt = (await getInput(`🔴 Debug: \n -1: omitir\n -2: editar\n -3: salir\noption: `)).toLocaleLowerCase();
+      if (opt === "1") return undefined;
+      if (opt === "2") {
+        const p = await getInput("Nuevo prompt(Nada para cancelar)");
+        if (p) m.content = p;
+      }
+      if (opt === "3") return undefined;
+    }
+    this.fistInput = false;
+
     const r = await this.generate(m.content);
+
     this.push(M(Roles.ai, r));
     return r;
   }
@@ -30,11 +47,12 @@ export class AloneChatResponse {
     }
   }
 
-  async tryLoopInput(getInput: () => Promise<string | undefined>, result: (result) => Promise<void>) {
+  async tryLoopInput(getProndt: () => Promise<string | undefined>, result: (result) => Promise<void>) {
     while (true) {
-      const input = await getInput();
+      const input = await getProndt();
       if (!input) break;
-      await result(await this.tryGenerate(input));
+      const re = await this.tryGenerate(input);
+      if (re) await result(re);
     }
   }
 }

@@ -18,14 +18,14 @@
   {
     "description": "Esto es la peticion de un usuario, y solo se recibe al principio",
     "sampleInput": {
-      "type": "client.resquest",
+      "type": "user.resquest",
       "message": "analiza lo que hay en C://carpeta1/src/"
     }
   },
   {
     "description": "Esto es la respuesta final del LLM al usuario (responder esto termina la iteracion.)",
     "sampleResponse": {
-      "type": "client.response",
+      "type": "user.response",
       "message": "analiza lo que hay en C://carpeta1/src/"
     }
   },

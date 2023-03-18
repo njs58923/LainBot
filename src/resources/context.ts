@@ -36,7 +36,7 @@ const start_messages = [
 ];
 
 export const build_messages = (): Message[] => {
-  return [{ role: Roles.system, content: context }, ...start_messages];
+  return [{ role: Roles.system, content: context2 }, ...start_messages];
 };
 
 export const build_messages_intructions = (): Message => {

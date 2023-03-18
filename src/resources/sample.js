@@ -3,11 +3,11 @@
     by: "System",
     raw: {
       "#": {
-        type: "client.resquest",
+        type: "user.resquest",
         message: 'arregla el problema que tengo en "C:\\MyAPP", el loop no llega hasta el 100 por algún motivo',
       },
     },
-    raw: `{"#":{"type":"client.resquest","message":"arregla el problema que tengo en \"C:\\MyAPP\", el loop no llega hasta el 100 por algún motivo"}}`,
+    raw: `{"#":{"type":"user.resquest","message":"arregla el problema que tengo en \"C:\\MyAPP\", el loop no llega hasta el 100 por algún motivo"}}`,
   },
   {
     by: "IA",

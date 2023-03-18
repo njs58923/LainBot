@@ -26,10 +26,9 @@ const generateResponse = async (message) => {
 export const ChatBing = async () => {
   await api.createConnection({
     browserURL: "http://127.0.0.1:21222",
-    goto: "https://edgeservices.bing.com/edgesvc/chat?clientscopes=chat,noheader&udsframed=1&form=SHORUN&shellsig=e823d889fd0c1a675cfcc2b6318aaae74167eab5&darkschemeovr=1",
   });
 
-  const bing = new AloneChatResponse((msg) => generateResponse(msg));
+  const bing = new AloneChatResponse((msg) => generateResponse(msg), { debug: true });
 
   let messages_inits: string[] = [];
 
@@ -51,7 +50,6 @@ export const ChatBing = async () => {
 
   await bing.tryLoopInput(
     async () => {
-      if (!(await getInput("🔴 continuar..."))) return undefined;
       return JSON.stringify(input);
     },
     async (raw) => {

@@ -26,7 +26,7 @@ export class BaseHook {
       this.browser = await puppeteer.connect({ browserURL, defaultViewport: null });
       let pages = await this.browser.pages();
       const allPages = pages.map((p) => ({ page: p, url: p.url() }));
-      const existPage = allPages.find((i) => i.url === goto)?.page;
+      const existPage = allPages.find((i) => i.url.includes(goto))?.page;
       if (existPage) {
         this.page = existPage;
       } else {

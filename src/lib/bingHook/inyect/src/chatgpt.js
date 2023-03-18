@@ -35,7 +35,7 @@ const findMessages = () => {
 
 const findModelInfo = () => {
   const ctx = findContext();
-  ctx.availableModels.find((i) => i.id === ctx.currentThreadModel);
+  return JSON.stringify(ctx.availableModels.find((i) => i.id === ctx.currentThreadModel));
 };
 
 const waitInput = async () => {
