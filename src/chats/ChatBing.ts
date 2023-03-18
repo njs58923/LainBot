@@ -6,7 +6,7 @@ import {
 } from "../interactios";
 import { BingHook } from "../lib/bingHook/bingHook";
 import { BuildContext, Roles } from "../resources/context";
-import { Samples } from "../resources/samples";
+import { SampleInits, Samples } from "../resources/samples";
 import {
   logMessage,
   getCircularReplacer,
@@ -43,8 +43,8 @@ export const ChatBing = async () => {
   });
 
   const roles = new Roles({
-    ai: "assistant",
-    system: "user",
+    ai: "IA",
+    system: "App",
     context: "system",
   });
 
@@ -60,7 +60,7 @@ export const ChatBing = async () => {
   });
 
   await controller.tryAutoGenerate(
-    roles.replaceAll(ctx.build_unique_prompt("#"))
+    roles.replaceAll(...SampleInits["traslate this"](ctx.context))
   );
 
   let input = CreateResquest(await getInput("You: "));
