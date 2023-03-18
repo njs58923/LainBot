@@ -1,7 +1,8 @@
 import { exec, spawn, ChildProcessWithoutNullStreams } from "child_process";
 import { readdirSync, readFileSync, writeFileSync } from "fs";
-import { getInput } from "./utils/index";
+import { extractObjects, getInput, truncateText } from "./utils/index";
 import { cmd, powershell } from "./utils/execute";
+import axios from "axios";
 
 export type InteractionRaw = string;
 export type Interaction = { type: string } & Record<string, unknown>;
@@ -23,8 +24,8 @@ export const interactions = {
     return { type: "user.request", message: await getInput("🟢 You: ") };
   },
   "user.request": async ({ message }) => {
-    console.log(`🟢 ${message}`);
-    process.exit();
+    console.log(`🔴 Solo usuarios pueden usar esto (${message})`);
+    return {};
   },
   "user.response": async ({ message }) => {
     console.log(`🟦 ${message}`);
@@ -78,6 +79,29 @@ export const interactions = {
     if (shell === "CMD") return cmd({ command, location });
     return { error: `The value ${shell} in shell not is valid.` };
   },
+  "ia.httpGet": async ({ url, headers, params }) => {
+    try {
+      const response = await axios.get<string>(url, {
+        headers,
+        params,
+        transformResponse: (x) => x,
+      });
+      return { response: truncateText(response.data, 1024) };
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  },
+  "ia.httpPost": async ({ url, headers, data }) => {
+    try {
+      const response = await axios.post(url, data, {
+        headers,
+        transformResponse: (x) => x,
+      });
+      return { response: truncateText(response.data, 1024) };
+    } catch (error: any) {
+      return { error: error.message };
+    }
+  },
 };
 
 export const CreateResquest = (message: string) => {
@@ -86,8 +110,15 @@ export const CreateResquest = (message: string) => {
 
 export const TryRunInteraction = async (raw: Interaction | InteractionRaw) => {
   try {
-    var interaction =
-      typeof raw === "string" ? (JSON.parse(raw) as Interaction) : raw;
+    var interaction: Interaction[] = [];
+    if (typeof raw !== "string") interaction = [raw];
+    else {
+      try {
+        interaction = extractObjects(raw as any) as Interaction[];
+      } catch (error) {
+        throw error;
+      }
+    }
   } catch (error) {
     return {
       error: `Format of interations not valid, requered alone valid JSON and you must respect the following format: {"type":"xxx", ...props}`,
@@ -99,7 +130,7 @@ export const TryRunInteraction = async (raw: Interaction | InteractionRaw) => {
 
   const result = (
     await Promise.all(
-      Object.entries({ interaction }).map(async ([key, value]) => {
+      interaction.map(async (value, key) => {
         if (typeof value !== "object")
           return [
             key,
@@ -108,7 +139,7 @@ export const TryRunInteraction = async (raw: Interaction | InteractionRaw) => {
             },
           ];
 
-        const { type, ...properties } = interaction;
+        const { type, ...properties } = value;
 
         if (!interactions[type])
           return [
@@ -128,14 +159,14 @@ export const TryRunInteraction = async (raw: Interaction | InteractionRaw) => {
   ).reduce((obj, [k, v]) => ({ ...obj, [k]: v }), {});
 
   //   console.log(result);
-  return result["interaction"];
+  return Object.keys(result).length === 1
+    ? result[Object.keys(result)[0]]
+    : result;
 };
 
 export const TryRepairInteraction = (raw: string) => {
   raw = raw.trim();
-  raw = raw.replace(/“|”/g, '"');
-  const index = raw.indexOf('{"type"');
-  raw = index !== -1 ? raw.slice(index) : raw;
+  raw = raw.replace(/"|"/g, '"');
   const regex = raw.match(/\`\`\`([^]*)\`\`\`/);
   if (regex) raw = regex[1].replace(/\\/g, "\\\\");
   return raw;

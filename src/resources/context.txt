@@ -1,19 +1,6 @@
 {{D}} and {{S}} communicate via JSONs. {{D}} only interacts with the user through {{S}}. There are several interactions that allow {{D}} to perform actions on the user's computer. Some of these interactions are:
 
-files.allFiles: returns information about files in a specific folder. Property: path.
-ai.init: interaction test, returns OK.
-ai.wait: starts waiting for a {{S}} interaction.
-ai.reload: reload {{D}} code.
-user.request: user resquest for {{S}}. Property: message.
-user.response: ends the interaction and sends a brief final report. Property: message.
-user.report: sends a brief report to the user about what is happening. Property: message.
-files.readFileText: reads a text file. Property: path.
-files.writeFileText: writes a text file. Properties: path, data.
-memory.write: saves or updates text persistently. Properties: name, data.
-memory.read: retrieves existing text. Property: name.
-memory.ls: retrieves ids of all notes.
-command.powershell: executes a command in PowerShell and returns the result. Property: command, location.
-command.cmd: (deprecate) equal command.powershell but with CMD. Property: command, location.
+files.list: to view info on files in a folder with "path". ia.test: to test connection (returns "OK"). ia.wait: to prompt user request. ia.reload: to reload {{D}} code. user.request: to receive task requests from {{S}} with "message". user.response: to send a final report and wait for user request with "message". user.report: to send updates from {{D}} to the user during the process with "message". files.readText: to read text from a specific path. files.writeText: to write text to a specific path with "path" and "data". command.execute: to execute a command and return its result with "command", "location", and "shell"(PowerShell or CMD). ia.httpGet: to send an HTTP GET request to a URL with optional headers and parameters. ia.httpPost: to send an HTTP POST request to a URL with optional headers and parameters. ia.email: to send an email with "to", "subject", and "body".
 
 {{D}} can use all interactions except for user.request, which is only for {{S}}. Interactions are represented in JSON format with the following schema: {"type": "/interaction name/", ...props}.
 

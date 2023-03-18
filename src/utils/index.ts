@@ -1,6 +1,6 @@
 import { createInterface } from "readline";
 import { Message } from "../resources/context";
-
+import JSONbig from "json-bigint";
 const rl = createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -40,3 +40,41 @@ export const logMessage = ({ role, content }) => {
 export const M = (role, content): Message => {
   return { role, content };
 };
+export function truncateText(text: string, limit: number = 1000) {
+  if (text.length > limit) {
+    return text.slice(0, limit) + "…";
+  } else {
+    return text;
+  }
+}
+
+export function extractObjects(str) {
+  let objects: any[] = [];
+  let stack: any[] = [];
+  let startIdx = -1;
+
+  for (let i = 0; i < str.length; i++) {
+    let char = str[i];
+
+    if (char === "{") {
+      if (stack.length === 0) {
+        startIdx = i;
+      }
+      stack.push("{");
+    } else if (char === "}") {
+      stack.pop();
+      if (stack.length === 0 && startIdx !== -1) {
+        let jsonString = str.slice(startIdx, i + 1);
+        try {
+          let obj = JSON.parse(jsonString);
+          objects.push(obj);
+        } catch (error) {
+          console.error("Error al parsear JSON:", error);
+        }
+        startIdx = -1;
+      }
+    }
+  }
+
+  return objects;
+}

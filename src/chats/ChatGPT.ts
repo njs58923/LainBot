@@ -6,7 +6,7 @@ import {
 } from "../interactios";
 import { ChatGPTHook } from "../lib/bingHook/chatGPTHook";
 import { BuildContext, Roles } from "../resources/context";
-import { SampleInits } from "../resources/samples";
+import { SampleInits, Samples } from "../resources/samples";
 import { getCircularReplacer, getInput } from "../utils";
 import { AloneChatResponse } from "./utils/AloneChatResponse";
 
@@ -36,7 +36,7 @@ export const ChatGPT = async () => {
     browserURL: "http://127.0.0.1:21222",
   });
 
-  const roles = new Roles({ ai: "A", system: "B", context: "system" });
+  const roles = new Roles({ ai: "IA", system: "App", context: "system" });
 
   const controller = new AloneChatResponse((msg) => generateResponse(msg), {
     debug: true,
@@ -44,14 +44,19 @@ export const ChatGPT = async () => {
   });
 
   const ctx = new BuildContext({
-    context: "context2",
+    context: "context",
     roles,
-    samples: [],
+    samples: Samples.simple(roles),
   });
 
   await controller.tryAutoGenerate(
     roles.replaceAll(
-      ...SampleInits["traslate this"](ctx.context, { chatName: "chatbot" })
+      ...SampleInits["me haces un resumen muy corto"](
+        ctx.build_unique_prompt(":"),
+        {
+          chatName: "chatbot",
+        }
+      )
     )
   );
 

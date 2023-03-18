@@ -19,7 +19,7 @@ export class AloneChatResponse {
     this.roles = roles;
     this.list = initMessages;
   }
-  async tryGenerate(text: string) {
+  async tryGenerate(text: string): Promise<string | undefined> {
     const m = M(this.roles.v.system, text);
     this.push(m);
 
@@ -36,14 +36,14 @@ export class AloneChatResponse {
       console.log("\n");
 
       if (opt === "1") return undefined;
-      if (opt === "2") {
-        const p = await getInput("Nuevo prompt(Nada para cancelar): ");
-        if (p) m.content = p;
-      }
-      if (opt === "3") return `{ type: "user.request", message: "END" }`;
+      if (opt === "2")
+        return this.tryGenerate(
+          await getInput("Nuevo prompt(Nada para cancelar): ")
+        );
+      if (opt === "3") return `{ "type": "user.response", "message": "END" }`;
       if (opt === "4")
         fake = await getInput("Fake response(Nada para cancelar): ");
-      if (opt === "5") return undefined;
+      if (opt === "5") process.exit();
     }
     this.fistInput = false;
 

@@ -34,6 +34,24 @@ export const SampleInits = {
     "y que hace?",
     "y tú puedes simular ser {{D}} y yo {{S}}?",
   ],
+  "me haces un resumen": (context: string, { chatName }) => [
+    "buenas " +
+      chatName +
+      ", me haces un resumen de esto\n\n" +
+      context +
+      "\n\npd: no traduscas los nombres de las interaciones, ni las key de los props.",
+    "y que hace?",
+    "y tú puedes simular ser {{D}} y yo {{S}}?",
+  ],
+  "me haces un resumen muy corto": (context: string, { chatName }) => [
+    "buenas " +
+      chatName +
+      ", me haces un resumen muy corto de esto\n\n" +
+      context +
+      "\n\npd: no traduscas los nombres de las interaciones, ni las key de los props.",
+    "y que hace?",
+    "y tú puedes simular ser {{D}} y yo {{S}}?",
+  ],
 };
 
 /*

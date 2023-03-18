@@ -8,7 +8,7 @@ export class BingHook extends BaseHook {
     });
     if (!hasInyect) {
       console.log("Loading Page...");
-      await this.evaluate("await chatBing.waitLoading()");
+      await this.evaluate(`await chatBing.waitLoading()`);
       console.log("");
     }
     return { hasInyect };
