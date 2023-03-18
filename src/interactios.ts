@@ -1,7 +1,7 @@
 import { exec, spawn, ChildProcessWithoutNullStreams } from "child_process";
 import { readdirSync, readFileSync, writeFileSync } from "fs";
 import { extractObjects, getInput, truncateText } from "./utils/index";
-import { cmd, powershell } from "./utils/execute";
+import { cmd, powershell, runScript } from "./utils/execute";
 import axios from "axios";
 
 export type InteractionRaw = string;
@@ -102,6 +102,17 @@ export const interactions = {
       return { error: error.message };
     }
   },
+  eval: async ({ lang, script }) => {
+    return new Promise((resolve, reject) => {
+      runScript(lang, script, (error, result) => {
+        if (error) {
+          resolve({ error: error.message });
+        } else {
+          resolve({ result });
+        }
+      });
+    });
+  },
 };
 
 export const CreateResquest = (message: string) => {
@@ -121,7 +132,7 @@ export const TryRunInteraction = async (raw: Interaction | InteractionRaw) => {
     }
   } catch (error) {
     return {
-      error: `Format of interations not valid, requered alone valid JSON and you must respect the following format: {"type":"xxx", ...props}`,
+      error: `The response is not a valid JSON`,
     };
   }
 

@@ -70,6 +70,7 @@ export function extractObjects(str) {
           objects.push(obj);
         } catch (error) {
           console.error("Error al parsear JSON:", error);
+          throw error;
         }
         startIdx = -1;
       }
