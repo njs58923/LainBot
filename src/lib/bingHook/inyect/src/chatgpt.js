@@ -65,7 +65,7 @@ const waitInput = async () => {
 const sendInput = async (content) => {
   querySelector("textarea")?.focus();
   await new Promise((r) => setTimeout(r, 500 + Math.random()));
-  page_keyboard(content, { jumpLine: true, jumpEnd: "\n" });
+  page_keyboard(content, true);
   await waitForSelector("form button.absolute div.text-2xl");
   await waitNotForSelector("form button.absolute div.text-2xl");
 

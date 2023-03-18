@@ -80,7 +80,7 @@ export class BaseHook {
     });
     this.page.exposeFunction(
       `page_keyboard`,
-      async (text: string, { jumpLine = false, jumpEnd = null } = {}) => {
+      async (text: string, jumpLine = false) => {
         if (!jumpLine) await this.page.keyboard.type(text);
         else {
           let list = text.split("\n");
@@ -93,7 +93,7 @@ export class BaseHook {
             }
             await this.page.keyboard.type(text);
           }
-          if (jumpEnd) await this.page.keyboard.type(jumpEnd);
+          if (jumpLine) await this.page.keyboard.type("\n");
         }
       }
     );
