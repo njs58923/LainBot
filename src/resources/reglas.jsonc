@@ -18,7 +18,7 @@
   {
     "description": "Esto es la peticion de un usuario, y solo se recibe al principio",
     "sampleInput": {
-      "type": "user.resquest",
+      "type": "user.request",
       "message": "analiza lo que hay en C://carpeta1/src/"
     }
   },
@@ -35,7 +35,11 @@
       "type": "files.readFileText",
       "path": "C://carpeta1/src/index.js"
     },
-    "sampleResponse": { "fileName": "index.js", "text": "for (let index = 0; index < 100; index++) {\n  console.log(index);\n}\n", "lenght": 71 }
+    "sampleResponse": {
+      "fileName": "index.js",
+      "text": "for (let index = 0; index < 100; index++) {\n  console.log(index);\n}\n",
+      "lenght": 71
+    }
   },
   {
     "description": "Esto permite guardar/actualizar un texto de forma persistentes, ya que los LLM tienden a olvidar con esto pueden hacer notas para evitar eso.",
@@ -59,7 +63,10 @@
     "sampleInput": {
       "type": "memory.ls"
     },
-    "sampleResponse": ["analisis de C://carpeta1/src/index.js", "analisis de C://carpeta1/src/package.json"]
+    "sampleResponse": [
+      "analisis de C://carpeta1/src/index.js",
+      "analisis de C://carpeta1/src/package.json"
+    ]
   },
   {
     "description": "Esto ejecuta un comando en powershell y devuelve el resultado (timeout 5s).",
@@ -67,6 +74,9 @@
       "type": "command.powershell",
       "commad": "Get-Date"
     },
-    "sampleResponse": { "time": "5ms", "result": "miércoles, 15 de marzo de 2023 17:56:45" }
+    "sampleResponse": {
+      "time": "5ms",
+      "result": "miércoles, 15 de marzo de 2023 17:56:45"
+    }
   }
 ]

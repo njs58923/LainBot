@@ -20,9 +20,9 @@ export const interactions = {
     return { status: "OK" };
   },
   "ia.wait": async ({}) => {
-    return { type: "user.resquest", message: await getInput("🟢 You: ") };
+    return { type: "user.request", message: await getInput("🟢 You: ") };
   },
-  "user.resquest": async ({ message }) => {
+  "user.request": async ({ message }) => {
     console.log(`🟢 ${message}`);
     process.exit();
   },
@@ -81,7 +81,7 @@ export const interactions = {
 };
 
 export const CreateResquest = (message: string) => {
-  return { type: "user.resquest", message };
+  return { type: "user.request", message };
 };
 
 export const TryRunInteraction = async (raw: Interaction | InteractionRaw) => {
