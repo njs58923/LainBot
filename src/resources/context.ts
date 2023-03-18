@@ -21,13 +21,15 @@ export type Message<T = string> = {
 
 export class Roles {
   constructor(public v: RolesType) {}
-  replace(text) {
+  replace(text: string) {
     return text.replace(/{{D}}|{{S}}/g, (match) => {
       if (match === "{{D}}") return this.v.ai;
-      if (match === "{{S}}") return this.v.ai;
+      if (match === "{{S}}") return this.v.system;
+      if (match === "{{C}}") return this.v.context;
+      throw 0;
     });
   }
-  replaceAll(...text) {
+  replaceAll(...text: string[]) {
     return text.map((t) => this.replace(t));
   }
 }
@@ -54,7 +56,8 @@ export class BuildContext {
   }
 
   replaceMessages(msgs: Message[]): Message[] {
-    return msgs.map((s) => (s.content = this.roles.replace(s.content)));
+    msgs.forEach((s) => (s.content = this.roles.replace(s.content)));
+    return msgs;
   }
 
   build_messages(): Message[] {
@@ -72,7 +75,7 @@ export class BuildContext {
         .join("\n")}`;
     if (style === "#")
       return `${this.context}\n\n${this.samples
-        .map((m) => `# ${m.role}:\n${m.content}`)
+        .map((m) => `# ${m.role}:\n${m.content}\n`)
         .join("\n")}`;
     throw 0;
   };

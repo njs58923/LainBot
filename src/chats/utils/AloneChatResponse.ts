@@ -24,11 +24,16 @@ export class AloneChatResponse {
     this.push(m);
 
     if (this.debug && !this.fistInput) {
+      console.log("\n");
       const opt = (
         await getInput(
-          `🔴 Debug: \n   1: omitir\n   2: editar\n   3: salir\noption: `
+          `🔴 Debug: ${
+            m.content.split(/\W+/).length * 1.33
+          } tokens \n   1: omitir\n   2: editar\n   3: salir\n  option: `
         )
       ).toLocaleLowerCase();
+      console.log("\n");
+
       if (opt === "1") return undefined;
       if (opt === "2") {
         const p = await getInput("Nuevo prompt(Nada para cancelar)");
@@ -54,10 +59,8 @@ export class AloneChatResponse {
     while (list.length > 0) {
       const text = list.shift();
       if (!text) break;
-      const m = M(this.roles.v.system, text);
       const replace = hook ? await hook(text) : null;
-      this.list.forEach((m) => debugLog(m));
-      if (replace || m.content) this.tryGenerate(replace || m.content);
+      if (replace || text) await this.tryGenerate(replace || text);
     }
   }
 

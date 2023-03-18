@@ -59,9 +59,9 @@ export const ChatBing = async () => {
     roles,
   });
 
-  let messages_inits: string[] = [ctx.build_unique_prompt("#")];
-
-  await controller.tryAutoGenerate(roles.replaceAll(messages_inits));
+  await controller.tryAutoGenerate(
+    roles.replaceAll(ctx.build_unique_prompt("#").replace(/\n/g, " "))
+  );
 
   let input = CreateResquest(await getInput("You: "));
 

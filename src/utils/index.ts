@@ -30,12 +30,11 @@ export const getCircularReplacer = () => {
 export const isDebug = process.env.DEBUG?.toLocaleLowerCase() === `true`;
 
 export const debugLog = (...args) => {
-  let BgGray = "\x1b[90m";
-  if (isDebug) console.log(BgGray, ...args, "\x1b[0m");
+  if (isDebug) console.log("\x1b[90m", ...args, "\x1b[0m");
 };
 
 export const logMessage = ({ role, content }) => {
-  debugLog(`${role}: ${content}`);
+  console.log("\x1b[32m", `${role}: `, "\x1b[90m", `${content}`, "\x1b[0m");
 };
 
 export const M = (role, content): Message => {

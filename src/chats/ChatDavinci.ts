@@ -38,7 +38,7 @@ export const ChatDavinci = async () => {
 
   debugLog(prompt);
 
-  let input = { type: "user.request", message: await getInput("You: ") };
+  let input = { type: "user.resquest", message: await getInput("You: ") };
   debugLog(input);
 
   while (input.message !== "bye") {

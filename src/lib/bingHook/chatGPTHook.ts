@@ -4,7 +4,7 @@ export class ChatGPTHook extends BaseHook {
   async createConnection({ browserURL }) {
     const { hasInyect } = await super.createConnection({
       browserURL,
-      goto: "https://chat.openai.com/chat",
+      goto: "https://chat.openai.com/",
     });
     if (!hasInyect) {
       console.log("Loading Page...");

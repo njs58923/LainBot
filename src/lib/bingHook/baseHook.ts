@@ -45,11 +45,14 @@ export class BaseHook {
       this.exposeFunction();
       return { hasInyect };
     };
-
+    let value: Awaited<ReturnType<typeof connect>>;
     while (true) {
       console.log("Conectado...");
-      return await connect();
+      value = await connect();
+      break;
     }
+    console.log("");
+    return value;
   }
 
   exposeFunction() {
