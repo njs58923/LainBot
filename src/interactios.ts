@@ -130,3 +130,11 @@ export const TryRunInteraction = async (raw: Interaction | InteractionRaw) => {
   //   console.log(result);
   return result["interaction"];
 };
+
+export const TryRepairInteraction = (raw: string) => {
+  const index = raw.indexOf('{"type"');
+  raw = index !== -1 ? raw.slice(index) : raw;
+  const regex = raw.match(/\`\`\`([^]*)\`\`\`/);
+  if (regex) raw = regex[1].replace(/\\/g, "\\\\");
+  return raw;
+};

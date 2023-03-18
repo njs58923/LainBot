@@ -23,7 +23,10 @@ export class BaseHook {
 
   async createConnection({ browserURL, goto }) {
     const connect = async () => {
-      this.browser = await puppeteer.connect({ browserURL, defaultViewport: null });
+      this.browser = await puppeteer.connect({
+        browserURL,
+        defaultViewport: null,
+      });
       let pages = await this.browser.pages();
       const allPages = pages.map((p) => ({ page: p, url: p.url() }));
       const existPage = allPages.find((i) => i.url.includes(goto))?.page;
@@ -89,7 +92,9 @@ export class BaseHook {
 
         let _eval = (${script});
         if(typeof _eval === "function"){
-            Promise.resolve(_eval(...JSON.parse(decodeURIComponent("${encodeURIComponent(JSON.stringify(args))}"))))
+            Promise.resolve(_eval(...JSON.parse(decodeURIComponent("${encodeURIComponent(
+              JSON.stringify(args)
+            )}"))))
             .then((...args)=> promise_ok("${id}", ...args))
             .catch((...args)=> promise_err("${id}", ...args))
         }else{

@@ -34,7 +34,7 @@ const generateResponse = async (prompt) => {
 };
 
 export const ChatDavinci = async () => {
-  let prompt = ctx.build_unique_prompt();
+  let prompt = ctx.build_unique_prompt("#");
 
   debugLog(prompt);
 

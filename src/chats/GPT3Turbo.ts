@@ -1,6 +1,10 @@
 import { writeFileSync } from "fs";
 import { ChatCompletionRequestMessage } from "openai";
-import { CreateResquest, TryRunInteraction } from "../interactios";
+import {
+  CreateResquest,
+  TryRepairInteraction,
+  TryRunInteraction,
+} from "../interactios";
 import { BuildContext, Message, Roles } from "../resources/context";
 import { Samples } from "../resources/samples";
 import { getCircularReplacer, logMessage, getInput, M } from "../utils";
@@ -15,8 +19,8 @@ const generateResponse = async (
     var response = await OpenAI.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages,
-      temperature: 0.2,
-      max_tokens: 150,
+      temperature: 0.3,
+      max_tokens: 200,
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0.6,
@@ -64,9 +68,7 @@ export const GPT3Turbo = async () => {
       return JSON.stringify(input);
     },
     async (raw) => {
-      const index = raw.indexOf('{"type"');
-      raw = index !== -1 ? raw.slice(index) : raw;
-      input = await TryRunInteraction(raw);
+      input = await TryRunInteraction(TryRepairInteraction(raw));
     }
   );
   await getInput("🟦🟦🟦 FIN 🟦🟦🟦");

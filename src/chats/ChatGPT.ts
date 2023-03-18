@@ -1,5 +1,9 @@
 import { writeFileSync } from "fs";
-import { CreateResquest, TryRunInteraction } from "../interactios";
+import {
+  CreateResquest,
+  TryRepairInteraction,
+  TryRunInteraction,
+} from "../interactios";
 import { ChatGPTHook } from "../lib/bingHook/chatGPTHook";
 import { Roles } from "../resources/context";
 import { getCircularReplacer, getInput } from "../utils";
@@ -67,11 +71,7 @@ export const ChatGPT = async () => {
       return JSON.stringify(input);
     },
     async (raw: string) => {
-      const index = raw.indexOf('{"type"');
-      raw = index !== -1 ? raw.slice(index) : raw;
-      const regex = raw.match(/\`\`\`([^]*)\`\`\`/);
-      if (regex) raw = regex[1].replace(/\\/g, "\\\\");
-      input = await TryRunInteraction(raw);
+      input = await TryRunInteraction(TryRepairInteraction(raw));
     }
   );
   await getInput("🟦🟦🟦 FIN 🟦🟦🟦");

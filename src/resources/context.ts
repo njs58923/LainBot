@@ -61,9 +61,10 @@ export class BuildContext {
     return [M(this.roles.v.system, this.context), ...this.samples];
   }
 
-  build_intructions(): Message {
+  build_intruction(): Message {
     return M(this.roles.v.system, this.context);
   }
+
   build_unique_prompt = (style: ":" | "#") => {
     if (style === ":")
       return `${this.context}\n\n${this.samples
@@ -71,7 +72,7 @@ export class BuildContext {
         .join("\n")}`;
     if (style === "#")
       return `${this.context}\n\n${this.samples
-        .map((m) => `### ${m.role}:\n${m.content}`)
+        .map((m) => `# ${m.role}:\n${m.content}`)
         .join("\n")}`;
     throw 0;
   };
