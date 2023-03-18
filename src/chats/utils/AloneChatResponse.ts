@@ -26,7 +26,7 @@ export class AloneChatResponse {
     if (this.debug && !this.fistInput) {
       const opt = (
         await getInput(
-          `🔴 Debug: \n -1: omitir\n -2: editar\n -3: salir\noption: `
+          `🔴 Debug: \n   1: omitir\n   2: editar\n   3: salir\noption: `
         )
       ).toLocaleLowerCase();
       if (opt === "1") return undefined;

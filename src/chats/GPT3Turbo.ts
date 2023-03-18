@@ -37,7 +37,11 @@ const generateResponse = async (
 };
 
 export const GPT3Turbo = async () => {
-  const roles = new Roles({ ai: "AI", system: "App", context: "system" });
+  const roles = new Roles({
+    ai: "assistant",
+    system: "user",
+    context: "system",
+  });
 
   const ctx = new BuildContext({
     context: "context2",

@@ -32,6 +32,8 @@ export class Roles {
   }
 }
 
+export const removeComments = (text: string) => text.replace(/^\/\/.*\n/gm, "");
+
 export class BuildContext {
   context: string;
   roles: Roles;
@@ -46,10 +48,9 @@ export class BuildContext {
     samples: Message[];
   }) {
     this.roles = roles;
-    this.samples = samples.map(
-      (s) => (s.content = this.roles.replace(s.content))
-    );
-    this.context = this.roles.replace(read(context));
+    this.samples = samples;
+    samples.forEach((s) => (s.content = this.roles.replace(s.content)));
+    this.context = removeComments(this.roles.replace(read(context)));
   }
 
   replaceMessages(msgs: Message[]): Message[] {
@@ -63,10 +64,16 @@ export class BuildContext {
   build_intructions(): Message {
     return M(this.roles.v.system, this.context);
   }
-  build_unique_prompt = () => {
-    return `${this.context}\n\n${this.samples
-      .map((m) => `${m.role}: ${m.content}`)
-      .join("\n")}`;
+  build_unique_prompt = (style: ":" | "#") => {
+    if (style === ":")
+      return `${this.context}\n\n${this.samples
+        .map((m) => `${m.role}: ${m.content}`)
+        .join("\n")}`;
+    if (style === "#")
+      return `${this.context}\n\n${this.samples
+        .map((m) => `### ${m.role}:\n${m.content}`)
+        .join("\n")}`;
+    throw 0;
   };
 }
 
