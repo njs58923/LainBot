@@ -20,7 +20,7 @@ const api = new BingHook({
   port: 3000,
 });
 
-const generateResponse = async (message) => {
+const generateResponse = async (message: string) => {
   try {
     var response = await api.sendMessage(message);
   } catch (error: any) {
@@ -60,7 +60,7 @@ export const ChatBing = async () => {
   });
 
   await controller.tryAutoGenerate(
-    roles.replaceAll(ctx.build_unique_prompt("#").replace(/\n/g, " "))
+    roles.replaceAll(ctx.build_unique_prompt("#"))
   );
 
   let input = CreateResquest(await getInput("You: "));

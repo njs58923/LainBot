@@ -36,7 +36,7 @@ export const ChatGPT = async () => {
     browserURL: "http://127.0.0.1:21222",
   });
 
-  const roles = new Roles({ ai: "AI", system: "App", context: "system" });
+  const roles = new Roles({ ai: "A", system: "B", context: "system" });
 
   const controller = new AloneChatResponse((msg) => generateResponse(msg), {
     debug: true,

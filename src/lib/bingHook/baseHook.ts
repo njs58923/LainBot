@@ -78,9 +78,25 @@ export class BaseHook {
     this.page.exposeFunction(`page_focus`, async (query) => {
       await this.page.focus(query);
     });
-    this.page.exposeFunction(`page_keyboard`, async (text) => {
-      await this.page.keyboard.type(text);
-    });
+    this.page.exposeFunction(
+      `page_keyboard`,
+      async (text: string, { jumpLine = false, jumpEnd = null } = {}) => {
+        if (!jumpLine) await this.page.keyboard.type(text);
+        else {
+          let list = text.split("\n");
+          for (let index = 0; index < list.length; index++) {
+            const text = list[index];
+            if (index > 0) {
+              await this.page.keyboard.down("Shift");
+              await this.page.keyboard.press("Enter");
+              await this.page.keyboard.up("Shift");
+            }
+            await this.page.keyboard.type(text);
+          }
+          if (jumpEnd) await this.page.keyboard.type(jumpEnd);
+        }
+      }
+    );
   }
 
   promises: Record<string, { r: (...any) => void; e: (...any) => void }> = {};

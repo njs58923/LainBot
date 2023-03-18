@@ -1,5 +1,9 @@
 const findContext = () => {
-  return findProps(querySelector("div[class*=react-scroll-to-bottom] div[class*=react-scroll-to-bottom]")).children.props;
+  return findProps(
+    querySelector(
+      "div[class*=react-scroll-to-bottom] div[class*=react-scroll-to-bottom]"
+    )
+  ).children.props;
 };
 
 // no agarra el ultimo mensaje
@@ -9,7 +13,8 @@ const findComments = () => {
       findFiber(i)
         .pendingProps.children.filter((i) => !!i)
         .find((i) => "props" in i)
-        .props.children.find((i) => i.type === "div").props.children[0].props.children[0].props.message.message
+        .props.children.find((i) => i.type === "div").props.children[0].props
+        .children[0].props.message.message
   );
   return list;
 };
@@ -20,8 +25,12 @@ const findCommentsB = () => {
 };
 
 const findCommentsC = () => {
-  return findFiber(document.querySelector("div.items-center.dark\\:bg-gray-800"))
-    .memoizedProps.children.filter((i) => i && Array.isArray(i) && i.some((i) => i && "props" in i))[0]
+  return findFiber(
+    document.querySelector("div.items-center.dark\\:bg-gray-800")
+  )
+    .memoizedProps.children.filter(
+      (i) => i && Array.isArray(i) && i.some((i) => i && "props" in i)
+    )[0]
     ?.filter((i) => !!i)
     .map((i) => i.props.turn);
 };
@@ -35,7 +44,9 @@ const findMessages = () => {
 
 const findModelInfo = () => {
   const ctx = findContext();
-  return JSON.stringify(ctx.availableModels.find((i) => i.id === ctx.currentThreadModel));
+  return JSON.stringify(
+    ctx.availableModels.find((i) => i.id === ctx.currentThreadModel)
+  );
 };
 
 const waitInput = async () => {
@@ -54,7 +65,7 @@ const waitInput = async () => {
 const sendInput = async (content) => {
   querySelector("textarea")?.focus();
   await new Promise((r) => setTimeout(r, 500 + Math.random()));
-  page_keyboard(content + "\n");
+  page_keyboard(content, { jumpLine: true, jumpEnd: "\n" });
   await waitForSelector("form button.absolute div.text-2xl");
   await waitNotForSelector("form button.absolute div.text-2xl");
 
