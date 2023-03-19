@@ -15,17 +15,21 @@ export class YamlDecoder extends BaseDecoder {
     return Array.isArray(value) ? value : [value];
   }
 
+  buildResultRaw(result: InterRes | InterRes[]): string {
+    return yaml.dump(result, { replacer: this.replacer });
+  }
+
   async tryInteractionRaw(message: string): Promise<string> {
     try {
       var list = this.parse(message);
     } catch (error: any) {
-      return yaml.dump({ error: error?.message }, { replacer: this.replacer });
+      return this.buildResultRaw({ error: error?.message });
     }
     const result = await this.tryRun(list);
-    return yaml.dump(result, { replacer: this.replacer });
+    return this.buildResultRaw(result);
   }
   buildRaw(type: string, props: object): string {
-    return yaml.dump([{ type, ...props }], { replacer: this.replacer });
+    return this.buildResultRaw([{ type, ...props }]);
   }
 
   replacer(key, value) {
@@ -36,9 +40,7 @@ export class YamlDecoder extends BaseDecoder {
   }
 
   parseMessage(message: Message<string, InterRes | InterRes[]>) {
-    (message as any).content = yaml.dump(message.content, {
-      replacer: this.replacer,
-    });
+    (message as any).content = this.buildResultRaw(message.content);
     return message as any as Message;
   }
 }

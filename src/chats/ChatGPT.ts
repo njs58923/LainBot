@@ -40,14 +40,12 @@ export const ChatGPT = async () => {
       ai: "IA",
       system: "App",
       context: "system",
-      format: Decoder.name,
     });
   if (1 === role)
     roles = new Roles({
       ai: "ChatGPT",
       system: "Bridge",
       context: "system",
-      format: Decoder.name,
     });
 
   const controller = new AloneChatResponse((msg) => generateResponse(msg), {
@@ -70,7 +68,7 @@ export const ChatGPT = async () => {
   await controller.tryAutoGenerate(
     roles.replaceAll(
       ...SampleInits["me haces un resumen muy corto"](
-        ctx.build_unique_prompt("#"),
+        await ctx.build_unique_prompt("#"),
         {
           chatName: "chatbot",
         }

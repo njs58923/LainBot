@@ -101,13 +101,23 @@ export const interactions: Record<
     const notes = readdirSync("./memory");
     return { notes };
   },
+  "memory.preview": () => {
+    // Retrieve ids of all notes
+    const notes = readdirSync("./memory");
+
+    return {
+      preview: notes.map((path) =>
+        truncateText(readFileSync(`./memory/${path}`, "utf-8"), 32)
+      ),
+    };
+  },
   "command.execute": ({ command, location, shell }) => {
     if (shell === "PowerShell") return powershell({ command, location });
     if (shell === "CMD") return cmd({ command, location });
     if (!shell) return { error: `The value shell is requered.` };
     return { error: `The value '${shell}' in shell not is valid.` };
   },
-  "ia.httpGet": async ({ url, headers, params }) => {
+  "net.httpGet": async ({ url, headers, params }) => {
     try {
       const response = await axios.get<string>(url, {
         headers,
@@ -119,7 +129,7 @@ export const interactions: Record<
       return { error: error.message };
     }
   },
-  "ia.httpPost": async ({ url, headers, data }) => {
+  "net.httpPost": async ({ url, headers, data }) => {
     try {
       const response = await axios.post(url, data, {
         headers,

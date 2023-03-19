@@ -1,5 +1,5 @@
-import { getInteractionsNames } from "../interactios";
-import { M } from "../utils";
+import { Decoder, getInteractionsNames, interactions } from "../interactios";
+import { LogColor, M } from "../utils";
 
 const fs = require("fs");
 
@@ -14,7 +14,6 @@ export type RolesType = {
   ai: string;
   system: string;
   context: string;
-  format: string;
 };
 export type Message<T = string, C = string> = {
   role: T;
@@ -25,7 +24,7 @@ export class Roles {
   constructor(public v: RolesType) {}
   replace(text: string) {
     return text.replace(/{{D}}|{{S}}|{{C}}|{{F}}/g, (match) => {
-      if (match === "{{F}}") return this.v.format;
+      if (match === "{{F}}") return Decoder.name;
       if (match === "{{D}}") return this.v.ai;
       if (match === "{{S}}") return this.v.system;
       if (match === "{{C}}") return this.v.context;
@@ -62,7 +61,7 @@ export class BuildContext {
   validateContext() {
     let list = getInteractionsNames().filter((i) => !this.context.includes(i));
     if (list.length === 0) return;
-    console.log(`🔴 Las siguientes interraciones no estan ${list.join(", ")}.`);
+    LogColor(91, `Las siguientes interraciones no estan ${list.join(", ")}.`);
   }
 
   replaceMessages(msgs: Message[]): Message[] {
@@ -85,20 +84,24 @@ export class BuildContext {
   }
 
   build_samples(style: Parameters<typeof this["build_sample"]>[1]) {
-    if (style === ":")
-      return this.samples.map((m) => this.build_sample(m, style)).join("\n");
-    if (style === "#")
-      return this.samples.map((m) => this.build_sample(m, style)).join("\n");
-    if (style === "###")
-      return this.samples.map((m) => this.build_sample(m, style)).join("\n");
+    return this.samples.map((m) => this.build_sample(m, style)).join("\n");
   }
 
-  build_unique_prompt = (style: Parameters<typeof this["build_sample"]>[1]) => {
-    if (style === ":") return `${this.context}\n\n${this.build_samples(style)}`;
-    if (style === "#") return `${this.context}\n\n${this.build_samples(style)}`;
-    if (style === "###")
-      return `${this.context}\n\n${this.build_samples(style)}`;
-    throw 0;
+  build_unique_prompt = async (
+    style: Parameters<typeof this["build_sample"]>[1]
+  ) => {
+    return this.context
+      .replace(/{{Sample}}/g, this.build_samples(style) ?? "")
+      .replace(
+        /{{Memory}}/g,
+        this.build_sample(
+          M(
+            "Memory",
+            Decoder.buildResultRaw(await interactions["memory.preview"]({}))
+          ),
+          style
+        ) || ""
+      );
   };
 }
 

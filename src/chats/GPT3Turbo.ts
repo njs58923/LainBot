@@ -1,6 +1,6 @@
 import { writeFileSync } from "fs";
 import { ChatCompletionRequestMessage } from "openai";
-import { Decoder } from "../interactios";
+import { Decoder, InterRes } from "../interactios";
 import { BuildContext, Message, Roles } from "../resources/context";
 import { Samples } from "../resources/samples";
 import { getCircularReplacer, logMessage, getInput, M } from "../utils";
@@ -41,13 +41,17 @@ export const GPT3Turbo = async () => {
     ai: "assistant",
     system: "user",
     context: "system",
-    format: Decoder.name,
   });
 
   const ctx = new BuildContext({
     context: "context2",
     roles,
-    samples: Samples.simple(roles),
+    samples: Samples.simple(roles).map((m) =>
+      Decoder.parseMessage({
+        role: m.role,
+        content: m.content as InterRes[],
+      })
+    ),
   });
 
   const controller = new AloneChatResponse(

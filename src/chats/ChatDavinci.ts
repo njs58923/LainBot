@@ -1,5 +1,5 @@
 import { writeFileSync } from "fs";
-import { Decoder } from "../interactios";
+import { Decoder, InterRes } from "../interactios";
 import { BuildContext, Roles } from "../resources/context";
 import { Samples } from "../resources/samples";
 import { getCircularReplacer, debugLog, getInput } from "../utils";
@@ -9,13 +9,17 @@ export const roles = new Roles({
   ai: "AI",
   system: "App",
   context: "system",
-  format: Decoder.name,
 });
 
 const ctx = new BuildContext({
   context: "context",
   roles,
-  samples: Samples.simple(roles),
+  samples: Samples.simple(roles).map((m) =>
+    Decoder.parseMessage({
+      role: m.role,
+      content: m.content as InterRes[],
+    })
+  ),
 });
 
 const generateResponse = async (prompt) => {
@@ -39,7 +43,7 @@ const generateResponse = async (prompt) => {
 };
 
 export const ChatDavinci = async () => {
-  let prompt = ctx.build_unique_prompt("#");
+  let prompt = await ctx.build_unique_prompt("#");
 
   debugLog(prompt);
 

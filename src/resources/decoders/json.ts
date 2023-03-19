@@ -1,11 +1,15 @@
-import { Inter } from "../../interactios";
+import { Inter, InterRes } from "../../interactios";
 import { extractObjects } from "../../utils";
 import { BaseDecoder } from "./base";
 
 export class JsonDecoder extends BaseDecoder {
+  buildResultRaw(result: InterRes | InterRes[]): string {
+    return JSON.stringify(result);
+  }
+
   name: string = "JSON";
   buildRaw(type: string, props: object): string {
-    return JSON.stringify(this.build(type, props));
+    return this.buildResultRaw(this.build(type, props));
   }
 
   parse(raw: string): Inter[] {
@@ -29,10 +33,10 @@ export class JsonDecoder extends BaseDecoder {
     try {
       var interaction = this.parse(raw);
     } catch (error: any) {
-      return JSON.stringify({ error: error?.message });
+      return this.buildResultRaw({ error: error?.message });
     }
 
-    return JSON.stringify(await this.tryRun(interaction));
+    return this.buildResultRaw(await this.tryRun(interaction));
   }
 }
 
