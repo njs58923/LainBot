@@ -24,7 +24,7 @@ export const powershell = ({ command, location }) => {
     const code = setTimeout(() => {
       if (output) return resolve({ result: output?.trim() || "" });
       reject(new Error("timeout(60s)"));
-    }, 600000);
+    }, 6000000);
 
     powershellProcess
       .invoke(`${command}`)
@@ -63,7 +63,7 @@ export const cmd = ({ command, location }) => {
     const code = setTimeout(() => {
       if (output) return resolve({ result: output?.trim() || "" });
       reject(new Error("timeout(60s)"));
-    }, 60000);
+    }, 6000000);
 
     powershellProcess
       .invoke(`${command}`)

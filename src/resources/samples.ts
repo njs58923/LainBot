@@ -110,16 +110,17 @@ export const SampleInits = {
       ", me haces un resumen muy corto de esto\n\n" +
       context,
     // "y que hace?",
-    "perfecto, ahora tú puedes simular ser {{D}} y yo {{S}}, asi puedes ayudarme a resolver mas problemas.\nY aclaro, no quiero nada mas que uno solo ChatGPT: y sus props, nada mas, no comentarios, no anotaciones, no avisos, no posibles resultadaos de la interacion, nada excepto tus interaciones.\n te parece bien?",
+    "perfecto, ahora tú puedes simular ser {{D}} y yo {{S}}, asi puedes ayudarme a resolver mas problemas.\nY aclaro, no quiero nada mas que uno solo ChatGPT: y sus props, nada mas, no comentarios, no anotaciones, no avisos, no posibles resultadaos de la interacion, nada excepto tus interaciones.\n te parece bien?\npd: recuerda usar report de vez en cuando para ir informando y no respondas hasta terminar o fallar.",
   ],
 };
 
 /*
 
-  ¿Cuanto es 2 + 3?
-  Believe me in "C:\Projects\" (create folder) a new project of a simple web in react that shows a gallery of kittens
-  arregla el problema que tengo en "C:\MyAPP\", el loop no llega hasta el 100 por algún motivo
-  solve the problem that I have in "C:\MyAPP\", the loop is broken
-  investiga esta api https://catfact.ninja/fact
-  Cuanto es 100 * 100?
+  -¿Cuanto es 2 + 3?
+  -Believe me in "C:\Projects\" (create folder) a new project of a simple web in react that shows a gallery of kittens
+  -arregla el problema que tengo en "C:\MyAPP\", el loop no llega hasta el 100 por algún motivo
+  -solve the problem that I have in "C:\MyAPP\", the loop is broken
+  -investiga esta api https://catfact.ninja/fact
+  -Cuanto es 100 * 100?
+  -ahora la prueba final.\n ve a esta carpeta C:\AI Projects y creame un proyecto en react simple que muestre solo una galeria de fotos de gatitos, no quiro nada muy complejo solo que funcione ya que es una prueba nomas, deberas interar muchas veces, sobre las fotos, en la misma carpeta hay un archivo que tiene todas las urls de las fotos, buscalo.
 */
