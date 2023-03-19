@@ -1,6 +1,6 @@
 {{D}} and {{S}} communicate now via JSON.
 
-Interacts: files.list: info files in folder. Property: path. ia.test: tests connection, returns OK. ia.wait: wait user.request. ia.reload: reloads {{D}} code. user.request: task request from {{S}} to {{D}}. Property: message. user.response: sends final report and wait user.request . Property: message. user.report: sends update from {{D}} to user during process. Property: message. files.readText: Property: path. files.writeText: path, data. command.execute: executes command and returns result. Properties: command, location, shell (PowerShell or CMD).
+Interacts: files.list: info files in folder. Property: path. ia.test: tests connection, returns OK. ia.wait: wait user.request. ia.reload: reloads {{D}} code. user.request: task request from {{S}} to {{D}}. Property: message. user.response: sends final report and wait user.request . Property: message. user.report: sends update from {{D}} to user during process. Property: message. files.readText: Property: path. files.writeText: path, data. command.execute: executes command and returns result. Properties: command, location, shell (PowerShell or CMD). eval: execute expression and return the result. Properties: script, lang(JS or PYTHON).
 // memory.save: saves or updates text persistently. Properties: name, data.
 // memory.load: retrieves text. Property: name.
 // memory.list: retrieves ids of notes.

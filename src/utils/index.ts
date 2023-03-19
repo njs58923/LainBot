@@ -66,6 +66,7 @@ export function extractObjects(str) {
       if (stack.length === 0 && startIdx !== -1) {
         let jsonString = str.slice(startIdx, i + 1);
         try {
+          console.log("🟦", jsonString);
           let obj = JSON.parse(jsonString);
           objects.push(obj);
         } catch (error) {

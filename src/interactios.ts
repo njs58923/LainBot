@@ -121,13 +121,23 @@ export const CreateResquest = (message: string) => {
 
 export const TryRunInteraction = async (raw: Interaction | InteractionRaw) => {
   try {
+    console.log("🔹", JSON.stringify(raw) as any, "🔹");
     var interaction: Interaction[] = [];
     if (typeof raw !== "string") interaction = [raw];
     else {
       try {
-        interaction = extractObjects(raw as any) as Interaction[];
+        interaction = [JSON.parse(raw as any)] as Interaction[];
       } catch (error) {
-        throw error;
+        try {
+          interaction = extractObjects(raw as any) as Interaction[];
+        } catch (error) {
+          try {
+            let obj = eval(raw as any) as Interaction;
+            if (typeof obj === "object") interaction = [obj];
+          } catch (error) {
+            throw error;
+          }
+        }
       }
     }
   } catch (error) {
@@ -178,7 +188,7 @@ export const TryRunInteraction = async (raw: Interaction | InteractionRaw) => {
 export const TryRepairInteraction = (raw: string) => {
   raw = raw.trim();
   raw = raw.replace(/"|"/g, '"');
-  const regex = raw.match(/\`\`\`([^]*)\`\`\`/);
-  if (regex) raw = regex[1].replace(/\\/g, "\\\\");
+  // const regex = raw.match(/\`\`\`([^]*)\`\`\`/);
+  // if (regex) raw = regex[1].replace(/\\/g, "\\\\");
   return raw;
 };
