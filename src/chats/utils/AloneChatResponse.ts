@@ -1,4 +1,3 @@
-import { CreateResquest, TryRunInteraction } from "../../interactios";
 import { Message, Roles, RolesType } from "../../resources/context";
 import { M, logMessage, debugLog, getInput } from "../../utils";
 
@@ -7,14 +6,22 @@ export class AloneChatResponse {
   fistInput = false;
   debug = false;
   roles: Roles;
+  forceEndPromp?: string;
   constructor(
     public generate: (text: string, list: Message[]) => Promise<string>,
     {
       debug = false,
       roles,
       initMessages = [],
-    }: { debug?: boolean; roles: Roles; initMessages?: Message[] }
+      forceEndPromp,
+    }: {
+      debug?: boolean;
+      roles: Roles;
+      initMessages?: Message[];
+      forceEndPromp?: string;
+    }
   ) {
+    this.forceEndPromp = forceEndPromp;
     this.debug = debug;
     this.roles = roles;
     this.list = initMessages;
@@ -30,7 +37,7 @@ export class AloneChatResponse {
         await getInput(
           `🔴 Debug: ${
             m.content.split(/\W+/).length * 1.33
-          } tokens \n   1: omitir\n   2: editar\n   3: simulate(End)\n   4: simulate\n   5: salir\n  option: `
+          } tokens \n   1: omitir\n   2: editar\n   3: force end\n   4: fake\n   5: salir\n  option: `
         )
       ).toLocaleLowerCase();
       console.log("\n");
@@ -40,10 +47,9 @@ export class AloneChatResponse {
         return this.tryGenerate(
           await getInput("Nuevo prompt(Nada para cancelar): ")
         );
-      else if (opt === "3")
-        return `{ "type": "user.response", "message": "END" }`;
+      else if (opt === "3" && this.forceEndPromp) return this.forceEndPromp;
       else if (opt === "4")
-        fake = await getInput("Fake response(Nada para cancelar): ");
+        fake = await getInput("Fake (Nada para cancelar): ");
       else if (opt === "5") process.exit();
       else if (opt) return this.tryGenerate(text);
     }

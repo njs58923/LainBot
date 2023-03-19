@@ -1,10 +1,6 @@
 import { writeFileSync } from "fs";
 import { ChatCompletionRequestMessage } from "openai";
-import {
-  CreateResquest,
-  TryRepairInteraction,
-  TryRunInteraction,
-} from "../interactios";
+import { Decoder } from "../interactios";
 import { BuildContext, Message, Roles } from "../resources/context";
 import { Samples } from "../resources/samples";
 import { getCircularReplacer, logMessage, getInput, M } from "../utils";
@@ -61,14 +57,14 @@ export const GPT3Turbo = async () => {
 
   controller.list.forEach((m) => logMessage(m));
 
-  let input = CreateResquest(await getInput("You: "));
+  let input = Decoder.createResquest(await getInput("You: "));
 
   await controller.tryLoopInput(
     async () => {
       return JSON.stringify(input);
     },
     async (raw) => {
-      input = await TryRunInteraction(TryRepairInteraction(raw));
+      input = await Decoder.tryInteractionRaw(raw);
     }
   );
   await getInput("🟦🟦🟦 FIN 🟦🟦🟦");

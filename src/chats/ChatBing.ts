@@ -1,9 +1,5 @@
 import { writeFileSync } from "fs";
-import {
-  CreateResquest,
-  TryRepairInteraction,
-  TryRunInteraction,
-} from "../interactios";
+import { Decoder } from "../interactios";
 import { BingHook } from "../lib/bingHook/bingHook";
 import { BuildContext, Roles } from "../resources/context";
 import { SampleInits, Samples } from "../resources/samples";
@@ -67,16 +63,15 @@ export const ChatBing = async () => {
     )
   );
 
-  let input = CreateResquest(await getInput("You: "));
+  let input = Decoder.createResquest(await getInput("You: "));
 
   await controller.tryLoopInput(
-    async () => {
-      return JSON.stringify(input);
-    },
+    async () => JSON.stringify(input),
     async (raw) => {
-      input = await TryRunInteraction(TryRepairInteraction(raw));
+      input = await Decoder.tryInteractionRaw(raw);
     }
   );
+
   await getInput("🟦🟦🟦 FIN 🟦🟦🟦");
 
   process.exit(0);

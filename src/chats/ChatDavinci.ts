@@ -1,5 +1,5 @@
 import { writeFileSync } from "fs";
-import { TryRunInteraction } from "../interactios";
+import { Decoder } from "../interactios";
 import { BuildContext, Roles } from "../resources/context";
 import { Samples } from "../resources/samples";
 import { getCircularReplacer, debugLog, getInput } from "../utils";
@@ -38,18 +38,16 @@ export const ChatDavinci = async () => {
 
   debugLog(prompt);
 
-  let input = { type: "user.request", message: await getInput("You: ") };
+  let input = Decoder.createResquest(await getInput("You: "));
   debugLog(input);
 
-  while (input.message !== "bye") {
-    const new_prompt = `${roles.v.system}: ` + JSON.stringify(input);
+  while (true) {
+    const new_prompt = `${roles.v.system}: ` + input;
     debugLog(new_prompt);
     await getInput("🔴 continuar...");
     prompt += "\n" + new_prompt + `\n${roles.v.ai}: `;
     let response = await generateResponse(prompt);
     debugLog(`${roles.v.ai}: ${response}`);
-    input = await TryRunInteraction(response as string);
+    input = await Decoder.tryInteractionRaw(response as string);
   }
-  console.log("AI: Goodbye!");
-  process.exit(0);
 };

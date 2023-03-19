@@ -3,9 +3,14 @@ import { readdirSync, readFileSync, writeFileSync } from "fs";
 import { extractObjects, getInput, truncateText } from "./utils/index";
 import { cmd, powershell, runScript } from "./utils/execute";
 import axios from "axios";
+import { JsonDecoder } from "./resources/decoders/json";
 
 export type InteractionRaw = string;
 export type Interaction = { type: string } & Record<string, unknown>;
+
+export const Decoder = new JsonDecoder();
+
+export const ForceStop = Decoder.buildRaw("user.response", { message: "END" });
 
 // Define the interactions that the AI can perform
 export const interactions = {
@@ -113,82 +118,4 @@ export const interactions = {
       });
     });
   },
-};
-
-export const CreateResquest = (message: string) => {
-  return { type: "user.request", message };
-};
-
-export const TryRunInteraction = async (raw: Interaction | InteractionRaw) => {
-  try {
-    console.log("🔹", JSON.stringify(raw) as any, "🔹");
-    var interaction: Interaction[] = [];
-    if (typeof raw !== "string") interaction = [raw];
-    else {
-      try {
-        interaction = [JSON.parse(raw as any)] as Interaction[];
-      } catch (error) {
-        try {
-          interaction = extractObjects(raw as any) as Interaction[];
-        } catch (error) {
-          try {
-            let obj = eval(raw as any) as Interaction;
-            if (typeof obj === "object") interaction = [obj];
-          } catch (error) {
-            throw error;
-          }
-        }
-      }
-    }
-  } catch (error) {
-    return {
-      error: `The response is not a valid JSON`,
-    };
-  }
-
-  if (typeof interaction !== "object")
-    return { error: "Format of interations not valid, requered object." };
-
-  const result = (
-    await Promise.all(
-      interaction.map(async (value, key) => {
-        if (typeof value !== "object")
-          return [
-            key,
-            {
-              error: `Invalid interaction, you must respect the following format: {"type":"xxx", ...props}`,
-            },
-          ];
-
-        const { type, ...properties } = value;
-
-        if (!interactions[type])
-          return [
-            key,
-            {
-              error: `Interaction type "${type}" not supported, you must respect the following format: {"type":"xxx", ...props}`,
-            },
-          ];
-
-        try {
-          return [key, await interactions[type](properties)];
-        } catch (error: any) {
-          return [key, error.message];
-        }
-      })
-    )
-  ).reduce((obj, [k, v]) => ({ ...obj, [k]: v }), {});
-
-  //   console.log(result);
-  return Object.keys(result).length === 1
-    ? result[Object.keys(result)[0]]
-    : result;
-};
-
-export const TryRepairInteraction = (raw: string) => {
-  raw = raw.trim();
-  raw = raw.replace(/"|"/g, '"');
-  // const regex = raw.match(/\`\`\`([^]*)\`\`\`/);
-  // if (regex) raw = regex[1].replace(/\\/g, "\\\\");
-  return raw;
 };

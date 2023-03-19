@@ -1,9 +1,5 @@
 import { writeFileSync } from "fs";
-import {
-  CreateResquest,
-  TryRepairInteraction,
-  TryRunInteraction,
-} from "../interactios";
+import { Decoder, ForceStop } from "../interactios";
 import { ChatGPTHook } from "../lib/bingHook/chatGPTHook";
 import { BuildContext, Roles } from "../resources/context";
 import { SampleInits, Samples } from "../resources/samples";
@@ -51,6 +47,7 @@ export const ChatGPT = async () => {
   const controller = new AloneChatResponse((msg) => generateResponse(msg), {
     debug: true,
     roles,
+    forceEndPromp: ForceStop,
   });
 
   const ctx = new BuildContext({
@@ -70,14 +67,12 @@ export const ChatGPT = async () => {
     )
   );
 
-  let input = CreateResquest(await getInput("You: "));
+  let input = Decoder.createResquest(await getInput("You: "));
 
   await controller.tryLoopInput(
-    async () => {
-      return JSON.stringify(input);
-    },
+    async () => input,
     async (raw: string) => {
-      input = await TryRunInteraction(TryRepairInteraction(raw));
+      input = await Decoder.tryInteractionRaw(raw);
     }
   );
   await getInput("🟦🟦🟦 FIN 🟦🟦🟦");
