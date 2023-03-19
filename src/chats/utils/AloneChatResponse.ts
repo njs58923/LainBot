@@ -36,14 +36,16 @@ export class AloneChatResponse {
       console.log("\n");
 
       if (opt === "1") return undefined;
-      if (opt === "2")
+      else if (opt === "2")
         return this.tryGenerate(
           await getInput("Nuevo prompt(Nada para cancelar): ")
         );
-      if (opt === "3") return `{ "type": "user.response", "message": "END" }`;
-      if (opt === "4")
+      else if (opt === "3")
+        return `{ "type": "user.response", "message": "END" }`;
+      else if (opt === "4")
         fake = await getInput("Fake response(Nada para cancelar): ");
-      if (opt === "5") process.exit();
+      else if (opt === "5") process.exit();
+      else if (opt) return this.tryGenerate(text);
     }
     this.fistInput = false;
 

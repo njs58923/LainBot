@@ -1,5 +1,6 @@
 import { exec, spawn, ChildProcessWithoutNullStreams } from "child_process";
 import { PowerShell } from "node-powershell";
+import shellEscape from "shell-escape";
 
 let powershellProcess: PowerShell = undefined as any;
 
@@ -79,4 +80,29 @@ export const cmd = ({ command, location }) => {
         reject(new Error(err.toString("utf8")));
       });
   }).catch((err) => ({ error: err.message }));
+};
+const escapeDoubleQuotes = (str) => {
+  return str.replace(/"/g, '\\"');
+};
+
+export const runScript = (language: string, script: string, callback) => {
+  let command;
+
+  if (language.toLocaleLowerCase() === "js") {
+    const escapedScript = escapeDoubleQuotes(script);
+    command = `node -p "${escapedScript}"`;
+  } else if (language.toLocaleLowerCase() === "python") {
+    const escapedScript = escapeDoubleQuotes(script);
+    command = `python -c "print(${escapedScript})"`;
+  } else {
+    return callback(new Error(`Language not supported`));
+  }
+
+  console.log(JSON.stringify(command));
+  exec(command, (error, stdout, stderr) => {
+    if (error) {
+      return callback(error);
+    }
+    callback(null, stdout.trim());
+  });
 };
