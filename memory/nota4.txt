@@ -1,0 +1,1 @@
+Evitar redundancia al usar user.report y user.response juntos.

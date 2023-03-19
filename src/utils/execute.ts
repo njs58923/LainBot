@@ -99,7 +99,6 @@ export const runScript = (language: string, script: string, callback) => {
     return callback(new Error(`Language not supported`));
   }
 
-  console.log(JSON.stringify(command));
   exec(command, (error, stdout, stderr) => {
     if (error) {
       return callback(error);

@@ -1,0 +1,1 @@
+Guardar errores cometidos en sesiones para evitar repetirlos en el futuro.

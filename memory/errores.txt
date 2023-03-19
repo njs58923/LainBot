@@ -1,0 +1,1 @@
+{"nota1":"No se puede utilizar {{ xxx }} en ninguna parte ya que no está soportado."}

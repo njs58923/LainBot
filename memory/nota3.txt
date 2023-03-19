@@ -1,0 +1,1 @@
+No era necesario volver a cargar la memoria ya que tenía el valor previamente.

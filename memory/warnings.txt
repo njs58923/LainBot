@@ -1,0 +1,1 @@
+{"nota1":"Esperar a que las interacciones se completen antes de responder."}

@@ -1,5 +1,5 @@
 import { exec, spawn, ChildProcessWithoutNullStreams } from "child_process";
-import { readdirSync, readFileSync, writeFileSync } from "fs";
+import { readdirSync, readFileSync, writeFileSync, unlinkSync } from "fs";
 import {
   extractObjects,
   getInput,
@@ -10,6 +10,7 @@ import { cmd, powershell, runScript } from "./utils/execute";
 import axios from "axios";
 import { JsonDecoder } from "./resources/decoders/json";
 import { YamlDecoder } from "./resources/decoders/yaml";
+import { basename } from "path";
 
 export type InteractionRaw = string;
 export type Inter = { type: string } & Record<string, unknown>;
@@ -83,12 +84,13 @@ export const interactions: Record<
     }
   },
   "memory.save": ({ name, data }) => {
-    // Save or update text persistently
-    writeFileSync(`./memory/${name}.txt`, data);
-    return { message: `Note ${name} saved` };
+    writeFileSync(
+      `./memory/${name}.txt`,
+      typeof data === "string" ? data : JSON.stringify(data)
+    );
+    return { message: `Memory '${name}' saved` };
   },
   "memory.load": ({ name }) => {
-    // Retrieve existing text
     const data = readFileSync(`./memory/${name}.txt`, "utf-8");
     const result = {
       data,
@@ -96,20 +98,37 @@ export const interactions: Record<
     };
     return result;
   },
+  "memory.delete": ({ name }) => {
+    const data = unlinkSync(`./memory/${name}.txt`);
+    return { message: `Memory '${name}' deleted` };
+  },
   "memory.list": () => {
     // Retrieve ids of all notes
     const notes = readdirSync("./memory");
-    return { notes };
+    const obj = {};
+    notes.map((path) => {
+      const data = readFileSync(`./memory/${path}`, "utf-8");
+      obj[basename(path, ".txt")] = {
+        preview: truncateText(data, 32),
+        size: data.length,
+      };
+    });
+    return obj;
   },
   "memory.preview": () => {
     // Retrieve ids of all notes
     const notes = readdirSync("./memory");
-
-    return {
-      preview: notes.map((path) =>
-        truncateText(readFileSync(`./memory/${path}`, "utf-8"), 32)
-      ),
-    };
+    const obj = {};
+    notes
+      .slice(0, 10)
+      .map(
+        (path) =>
+          (obj[basename(path, ".txt")] = truncateText(
+            readFileSync(`./memory/${path}`, "utf-8"),
+            64
+          ))
+      );
+    return obj;
   },
   "command.execute": ({ command, location, shell }) => {
     if (shell === "PowerShell") return powershell({ command, location });

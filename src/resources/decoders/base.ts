@@ -36,6 +36,8 @@ export abstract class BaseDecoder {
       })
     );
 
-    return result;
+    return result.filter(
+      (i) => !(i && Object.keys(i).length === 1 && "id" in i)
+    );
   }
 }
