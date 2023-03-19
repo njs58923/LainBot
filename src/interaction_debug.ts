@@ -6,7 +6,7 @@ var interaction_debug = async () => {
     let text = await getInput("Json: ");
     const result = await Decoder.tryInteractionRaw(text);
     let BgGray = "\x1b[90m";
-    console.log(BgGray, JSON.stringify(result), "\x1b[0m");
+    console.log(BgGray, result, "\x1b[0m");
     console.log("\n");
   }
 };

@@ -63,6 +63,10 @@ const waitInput = async () => {
 };
 
 const sendInput = async (content) => {
+  if (content === "#LAST#") {
+    let messages = findMessages();
+    return messages[messages.length - 1].content;
+  }
   querySelector("textarea")?.focus();
   await new Promise((r) => setTimeout(r, 500 + Math.random()));
   page_keyboard(content, true);

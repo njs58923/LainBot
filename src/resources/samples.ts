@@ -1,15 +1,76 @@
+import { Inter } from "../interactios";
+import { M } from "../utils";
 import { Roles, RolesType } from "./context";
 
 export const Samples = {
   simple: (roles: Roles) => [
-    { role: roles.v.ai, content: `{"type":"ia.test"}` },
-    { role: roles.v.system, content: `{"result": "OK"}` },
+    {
+      role: roles.v.system,
+      content: [
+        {
+          type: "user.request",
+          message: "¿Que hora es?",
+        },
+      ],
+    },
     {
       role: roles.v.ai,
-      content: `{"type":"command.execute", "commad": "Get-Date", "shell":"PowerShell"}`,
+      content: [
+        {
+          id: "command0",
+          type: "command.execute",
+          commad: "Get-Date",
+          shell: "PowerShell",
+        },
+        {
+          type: "user.report",
+          message: "try run 'Get-Date' in PowerShell...",
+          shell: "PowerShell",
+        },
+      ],
     },
-    { role: roles.v.system, content: `{"result":"17:56:45"}` },
-    { role: roles.v.ai, content: `{"type":"ia.wait"}` },
+    {
+      role: roles.v.system,
+      content: [{ id: "command0", result: "17:56:45" }],
+    },
+    {
+      role: roles.v.ai,
+      content: [{ type: "user.response", message: "Son las 17:56:45" }],
+    },
+  ],
+  multiFile: (roles: Roles) => [
+    M<string, Inter[]>(roles.v.ai, [
+      {
+        id: "interactios",
+        type: "files.readText",
+        path: "C:\\Lain\\src\\interactios",
+      },
+      {
+        id: "chatGPTHook",
+        type: "files.readText",
+        path: "C:\\Lain\\src\\lib\\bingHook\\chatGPTHook",
+      },
+      {
+        id: "context",
+        type: "files.readText",
+        path: "C:\\Lain\\src\\resources\\context",
+      },
+      {
+        id: "samples",
+        type: "files.readText",
+        path: "C:\\Lain\\src\\resources\\samples",
+      },
+      {
+        id: "utils",
+        type: "files.readText",
+        path: "C:\\Lain\\src\\utils",
+      },
+      {
+        id: "AloneChatResponse",
+        type: "files.readText",
+        path: "C:\\Lain\\src\\chats\\utils\\AloneChatResponse",
+      },
+    ]),
   ],
 };
 
@@ -49,7 +110,7 @@ export const SampleInits = {
       ", me haces un resumen muy corto de esto\n\n" +
       context,
     // "y que hace?",
-    "y tú puedes simular ser {{D}} y yo {{S}}?",
+    "perfecto, ahora tú puedes simular ser {{D}} y yo {{S}}, asi puedes ayudarme a resolver mas problemas.\nY aclaro, no quiero nada mas que uno solo ChatGPT: y sus props, nada mas, no comentarios, no anotaciones, no avisos, no posibles resultadaos de la interacion, nada excepto tus interaciones.\n te parece bien?",
   ],
 };
 

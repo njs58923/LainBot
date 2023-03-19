@@ -1,5 +1,5 @@
 import { writeFileSync } from "fs";
-import { Decoder, ForceStop, Inter } from "../interactios";
+import { Decoder, ForceStop, Inter, InterRes } from "../interactios";
 import { ChatGPTHook } from "../lib/bingHook/chatGPTHook";
 import { BuildContext, Roles } from "../resources/context";
 import { SampleInits, Samples } from "../resources/samples";
@@ -62,7 +62,7 @@ export const ChatGPT = async () => {
     samples: Samples.simple(roles).map((m) =>
       Decoder.parseMessage({
         role: m.role,
-        content: JSON.parse(m.content),
+        content: m.content as InterRes[],
       })
     ),
   });

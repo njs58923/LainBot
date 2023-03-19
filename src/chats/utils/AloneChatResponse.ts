@@ -1,5 +1,6 @@
 import { Message, Roles, RolesType } from "../../resources/context";
 import { M, logMessage, debugLog, getInput } from "../../utils";
+import { encode } from "gpt-3-encoder";
 
 export class AloneChatResponse {
   list: Message[] = [];
@@ -36,10 +37,12 @@ export class AloneChatResponse {
       const opt = (
         await getInput(
           `🔴 Debug: ${
-            m.content.split(/\W+/).length * 1.33
-          } tokens \n   1: omitir\n   2: editar\n   3: force end\n   4: fake\n   5: salir\n  option: `
+            encode(m.content).length
+          } tokens \n   1: omitir\n   2: editar\n   3: force end\n   4: fake\n   5: capture\n   6: salir\n  option: `
         )
-      ).toLocaleLowerCase();
+      )
+        .toLocaleLowerCase()
+        .trim();
       console.log("\n");
 
       if (opt === "1") return undefined;
@@ -50,7 +53,8 @@ export class AloneChatResponse {
       else if (opt === "3" && this.forceEndPromp) return this.forceEndPromp;
       else if (opt === "4")
         fake = await getInput("Fake (Nada para cancelar): ");
-      else if (opt === "5") process.exit();
+      else if (opt === "5") return this.tryGenerate("#LAST#");
+      else if (opt === "6") process.exit();
       else if (opt) return this.tryGenerate(text);
     }
     this.fistInput = false;

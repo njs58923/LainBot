@@ -80,7 +80,7 @@ export class BuildContext {
 
   build_sample(m: Message<string>, style: ":" | "#" | "###") {
     if (style === ":") return `${m.role}: ${m.content}`;
-    if (style === "#") return `# ${m.role}:\n${m.content}\n`;
+    if (style === "#") return `# ${m.role}:\n${m.content}`;
     if (style === "###") return `### ${m.role}:\n${m.content}\n`;
   }
 

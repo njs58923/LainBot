@@ -1,4 +1,4 @@
-import { Inter, TryInteraction } from "../../interactios";
+import { Inter, InterRes, TryInteraction } from "../../interactios";
 import { Message } from "../context";
 
 export abstract class BaseDecoder {
@@ -15,24 +15,26 @@ export abstract class BaseDecoder {
   }
 
   async tryRun(inters: Inter[]) {
-    const result = (
-      await Promise.all(
-        inters.map(async (value, key) => {
-          try {
-            if (typeof value !== "object")
-              throw new Error("Invalid interaction.");
+    const result = await Promise.all(
+      inters.map(async (value, key) => {
+        if (typeof value !== "object")
+          return {
+            id: `index:${key}`,
+            error: "Invalid interaction.",
+          } as InterRes;
 
-            const { type, ...properties } = value;
-            return [key, await TryInteraction(type, properties)];
-          } catch (error: any) {
-            return [key, error.message];
-          }
-        })
-      )
-    ).reduce((obj, [k, v]) => ({ ...obj, [k]: v }), {});
+        const { type, id, ...properties } = value;
+        try {
+          return {
+            id: id || `index:${key}`,
+            ...(await TryInteraction(type, properties)),
+          } as InterRes;
+        } catch (error: any) {
+          return { id: id || `index:${key}`, error: error.message } as InterRes;
+        }
+      })
+    );
 
-    return Object.keys(result).length === 1
-      ? result[Object.keys(result)[0]]
-      : result;
+    return result;
   }
 }

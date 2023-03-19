@@ -1,6 +1,11 @@
 import { exec, spawn, ChildProcessWithoutNullStreams } from "child_process";
 import { readdirSync, readFileSync, writeFileSync } from "fs";
-import { extractObjects, getInput, truncateText } from "./utils/index";
+import {
+  extractObjects,
+  getInput,
+  LogColor,
+  truncateText,
+} from "./utils/index";
 import { cmd, powershell, runScript } from "./utils/execute";
 import axios from "axios";
 import { JsonDecoder } from "./resources/decoders/json";
@@ -15,10 +20,17 @@ export const Decoder = new YamlDecoder();
 export const ForceStop = Decoder.buildRaw("user.response", { message: "END" });
 
 // Define the interactions that the AI can perform
-export const interactions = {
+export const interactions: Record<
+  string,
+  (prop: any) => InterRes | Promise<InterRes>
+> = {
   "files.list": ({ path }) => {
     try {
-      const files = readdirSync(path);
+      const files = readdirSync(path, { withFileTypes: true }).map((i) => ({
+        name: i.name,
+        type: i.isFile() ? "file" : "folder",
+      }));
+
       return { files };
     } catch (error: any) {
       return { error: error.message };
@@ -31,15 +43,23 @@ export const interactions = {
     return { type: "user.request", message: await getInput("🟢 You: ") };
   },
   "user.request": async ({ message }) => {
-    console.log(`🔴 Solo usuarios pueden usar esto (${message})`);
+    console.log("");
+    LogColor(91, `Solo usuarios pueden usar esto (${message})`);
     return {};
   },
   "user.response": async ({ message }) => {
-    console.log(`🟦 ${message}`);
+    console.log("");
+    LogColor(92, message);
+    return { type: "user.request", message: await getInput("🟢 You: ") };
+  },
+  "user.failed": async ({ message }) => {
+    console.log("");
+    LogColor(91, message);
     return { type: "user.request", message: await getInput("🟢 You: ") };
   },
   "user.report": ({ message }) => {
-    console.log(`AI report: ${message}`);
+    console.log("");
+    LogColor(96, message);
     return {};
   },
   "files.readText": ({ path }) => {
@@ -84,7 +104,8 @@ export const interactions = {
   "command.execute": ({ command, location, shell }) => {
     if (shell === "PowerShell") return powershell({ command, location });
     if (shell === "CMD") return cmd({ command, location });
-    return { error: `The value ${shell} in shell not is valid.` };
+    if (!shell) return { error: `The value shell is requered.` };
+    return { error: `The value '${shell}' in shell not is valid.` };
   },
   "ia.httpGet": async ({ url, headers, params }) => {
     try {
@@ -110,7 +131,7 @@ export const interactions = {
     }
   },
   eval: async ({ lang, script }) => {
-    return new Promise((resolve, reject) => {
+    return new Promise<InterRes>((resolve, reject) => {
       runScript(lang, script, (error, result) => {
         if (error) {
           resolve({ error: error.message });
@@ -126,7 +147,10 @@ export const getInteractionsNames = () => {
   return Object.keys(interactions);
 };
 
-export const TryInteraction = (type: string, props: object) => {
+export const TryInteraction = (
+  type: string,
+  props: object
+): InterRes | Promise<InterRes> => {
   if (!interactions[type])
     throw new Error(`Interaction type "${type}" not supported.`);
   return interactions[type](props);

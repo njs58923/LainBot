@@ -1,6 +1,7 @@
 import { exec, spawn, ChildProcessWithoutNullStreams } from "child_process";
 import { PowerShell } from "node-powershell";
 import shellEscape from "shell-escape";
+import { InterRes } from "../interactios";
 
 let powershellProcess: PowerShell = undefined as any;
 
@@ -19,7 +20,7 @@ export const powershell = ({ command, location }) => {
 
   let output = "";
 
-  return new Promise((resolve, reject) => {
+  return new Promise<InterRes>((resolve, reject) => {
     const code = setTimeout(() => {
       if (output) return resolve({ result: output?.trim() || "" });
       reject(new Error("timeout(60s)"));
@@ -58,7 +59,7 @@ export const cmd = ({ command, location }) => {
 
   let output = "";
 
-  return new Promise((resolve, reject) => {
+  return new Promise<InterRes>((resolve, reject) => {
     const code = setTimeout(() => {
       if (output) return resolve({ result: output?.trim() || "" });
       reject(new Error("timeout(60s)"));

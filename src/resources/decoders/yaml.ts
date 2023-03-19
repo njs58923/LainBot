@@ -9,9 +9,7 @@ export class YamlDecoder extends BaseDecoder {
   parse(message: string): Inter[] {
     var value: Inter | Inter[];
     message = message.trim();
-    console.log(JSON.stringify(message));
     message.replace(/^# ChatGPT:\n/g, "");
-    console.log(JSON.stringify(message));
     value = yaml.load(message) as Inter[];
 
     return Array.isArray(value) ? value : [value];
@@ -21,17 +19,26 @@ export class YamlDecoder extends BaseDecoder {
     try {
       var list = this.parse(message);
     } catch (error: any) {
-      return yaml.dump({ error: error?.message });
+      return yaml.dump({ error: error?.message }, { replacer: this.replacer });
     }
-    console.log(list);
-    return yaml.dump(await this.tryRun(list));
+    const result = await this.tryRun(list);
+    return yaml.dump(result, { replacer: this.replacer });
   }
   buildRaw(type: string, props: object): string {
-    return yaml.dump({ type, ...props });
+    return yaml.dump([{ type, ...props }], { replacer: this.replacer });
   }
 
-  parseMessage(message: Message<string, InterRes>) {
-    (message as any).content = yaml.dump(message.content);
+  replacer(key, value) {
+    if (typeof value === "function") {
+      return undefined;
+    }
+    return value;
+  }
+
+  parseMessage(message: Message<string, InterRes | InterRes[]>) {
+    (message as any).content = yaml.dump(message.content, {
+      replacer: this.replacer,
+    });
     return message as any as Message;
   }
 }

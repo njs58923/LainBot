@@ -7,6 +7,7 @@ const rl = createInterface({
 });
 
 export const getInput = (prompt) => {
+  console.log("");
   return new Promise<string>((resolve) => {
     rl.question(prompt, (answer) => {
       resolve(answer.replace(/\\n/g, "\n"));
@@ -30,14 +31,28 @@ export const getCircularReplacer = () => {
 export const isDebug = process.env.DEBUG?.toLocaleLowerCase() === `true`;
 
 export const debugLog = (...args) => {
-  if (isDebug) console.log("\x1b[90m", ...args, "\x1b[0m");
+  if (isDebug) LogColor(90, ...args);
+};
+export const LogColor = (color, ...args) => {
+  console.log(`\x1b[${color}m`, ...args, "\x1b[0m");
 };
 
 export const logMessage = ({ role, content }) => {
-  console.log("\x1b[32m", `${role}: `, "\x1b[90m", `${content}`, "\x1b[0m");
+  console.log("");
+  console.log(
+    "\x1b[32m",
+    `${role}(Raw): `,
+    "\x1b[90m",
+    `${content.replace(/\n/g, "\\n")}`,
+    "\x1b[0m"
+  );
+  console.log("\x1b[94m", `${content}`, "\x1b[0m");
 };
 
-export const M = (role, content): Message => {
+export const M = <R = string, A = string>(
+  role: R,
+  content: A
+): Message<R, A> => {
   return { role, content };
 };
 export function truncateText(text: string, limit: number = 1000) {
