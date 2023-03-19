@@ -3,7 +3,7 @@ import { Decoder, ForceStop, Inter } from "../interactios";
 import { ChatGPTHook } from "../lib/bingHook/chatGPTHook";
 import { BuildContext, Roles } from "../resources/context";
 import { SampleInits, Samples } from "../resources/samples";
-import { getCircularReplacer, getInput } from "../utils";
+import { getCircularReplacer, getInput, M } from "../utils";
 import { AloneChatResponse } from "./utils/AloneChatResponse";
 
 const api = new ChatGPTHook({
@@ -78,12 +78,18 @@ export const ChatGPT = async () => {
     )
   );
 
-  let input = Decoder.createResquest(await getInput("You: "));
+  let input = ctx.build_sample(
+    M(roles.v.system, Decoder.createResquest(await getInput("You: "))),
+    "#"
+  );
 
   await controller.tryLoopInput(
     async () => input,
     async (raw: string) => {
-      input = await Decoder.tryInteractionRaw(raw);
+      input = ctx.build_sample(
+        M(roles.v.system, await Decoder.tryInteractionRaw(raw)),
+        "#"
+      );
     }
   );
   await getInput("🟦🟦🟦 FIN 🟦🟦🟦");

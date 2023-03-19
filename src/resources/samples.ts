@@ -48,7 +48,7 @@ export const SampleInits = {
       chatName +
       ", me haces un resumen muy corto de esto\n\n" +
       context,
-    "y que hace?",
+    // "y que hace?",
     "y tú puedes simular ser {{D}} y yo {{S}}?",
   ],
 };

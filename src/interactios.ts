@@ -4,13 +4,13 @@ import { extractObjects, getInput, truncateText } from "./utils/index";
 import { cmd, powershell, runScript } from "./utils/execute";
 import axios from "axios";
 import { JsonDecoder } from "./resources/decoders/json";
-import { YarmDecoder } from "./resources/decoders/yarm";
+import { YamlDecoder } from "./resources/decoders/yaml";
 
 export type InteractionRaw = string;
 export type Inter = { type: string } & Record<string, unknown>;
 export type InterRes = Record<string, unknown>;
 
-export const Decoder = new YarmDecoder();
+export const Decoder = new YamlDecoder();
 
 export const ForceStop = Decoder.buildRaw("user.response", { message: "END" });
 

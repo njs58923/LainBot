@@ -3,8 +3,8 @@ import { Inter, InterRes } from "../../interactios";
 import { Message } from "../context";
 import { BaseDecoder } from "./base";
 
-export class YarmDecoder extends BaseDecoder {
-  name: string = "YARM";
+export class YamlDecoder extends BaseDecoder {
+  name: string = "YAML";
 
   parse(message: string): Inter[] {
     var value: Inter | Inter[];
@@ -21,10 +21,10 @@ export class YarmDecoder extends BaseDecoder {
     try {
       var list = this.parse(message);
     } catch (error: any) {
-      return JSON.stringify({ error: error?.message });
+      return yaml.dump({ error: error?.message });
     }
     console.log(list);
-    return JSON.stringify(await this.tryRun(list));
+    return yaml.dump(await this.tryRun(list));
   }
   buildRaw(type: string, props: object): string {
     return yaml.dump({ type, ...props });
