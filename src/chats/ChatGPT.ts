@@ -1,5 +1,5 @@
 import { writeFileSync } from "fs";
-import { Decoder, ForceStop } from "../interactios";
+import { Decoder, ForceStop, Inter } from "../interactios";
 import { ChatGPTHook } from "../lib/bingHook/chatGPTHook";
 import { BuildContext, Roles } from "../resources/context";
 import { SampleInits, Samples } from "../resources/samples";
@@ -36,12 +36,18 @@ export const ChatGPT = async () => {
 
   let role = 1;
   if (0 === role)
-    roles = new Roles({ ai: "IA", system: "App", context: "system" });
+    roles = new Roles({
+      ai: "IA",
+      system: "App",
+      context: "system",
+      format: Decoder.name,
+    });
   if (1 === role)
     roles = new Roles({
       ai: "ChatGPT",
       system: "Bridge",
       context: "system",
+      format: Decoder.name,
     });
 
   const controller = new AloneChatResponse((msg) => generateResponse(msg), {
@@ -53,13 +59,18 @@ export const ChatGPT = async () => {
   const ctx = new BuildContext({
     context: "context2",
     roles,
-    samples: Samples.simple(roles),
+    samples: Samples.simple(roles).map((m) =>
+      Decoder.parseMessage({
+        role: m.role,
+        content: JSON.parse(m.content),
+      })
+    ),
   });
 
   await controller.tryAutoGenerate(
     roles.replaceAll(
       ...SampleInits["me haces un resumen muy corto"](
-        ctx.build_unique_prompt(":"),
+        ctx.build_unique_prompt("#"),
         {
           chatName: "chatbot",
         }

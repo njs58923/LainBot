@@ -41,6 +41,7 @@ export const GPT3Turbo = async () => {
     ai: "assistant",
     system: "user",
     context: "system",
+    format: Decoder.name,
   });
 
   const ctx = new BuildContext({

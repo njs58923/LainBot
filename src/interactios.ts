@@ -4,11 +4,13 @@ import { extractObjects, getInput, truncateText } from "./utils/index";
 import { cmd, powershell, runScript } from "./utils/execute";
 import axios from "axios";
 import { JsonDecoder } from "./resources/decoders/json";
+import { YarmDecoder } from "./resources/decoders/yarm";
 
 export type InteractionRaw = string;
-export type Interaction = { type: string } & Record<string, unknown>;
+export type Inter = { type: string } & Record<string, unknown>;
+export type InterRes = Record<string, unknown>;
 
-export const Decoder = new JsonDecoder();
+export const Decoder = new YarmDecoder();
 
 export const ForceStop = Decoder.buildRaw("user.response", { message: "END" });
 
@@ -118,4 +120,14 @@ export const interactions = {
       });
     });
   },
+};
+
+export const getInteractionsNames = () => {
+  return Object.keys(interactions);
+};
+
+export const TryInteraction = (type: string, props: object) => {
+  if (!interactions[type])
+    throw new Error(`Interaction type "${type}" not supported.`);
+  return interactions[type](props);
 };

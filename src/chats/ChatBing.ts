@@ -42,6 +42,7 @@ export const ChatBing = async () => {
     ai: "IA",
     system: "App",
     context: "system",
+    format: Decoder.name,
   });
 
   const ctx = new BuildContext({

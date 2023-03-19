@@ -1,3 +1,4 @@
+import { getInteractionsNames } from "../interactios";
 import { M } from "../utils";
 
 const fs = require("fs");
@@ -13,16 +14,18 @@ export type RolesType = {
   ai: string;
   system: string;
   context: string;
+  format: string;
 };
-export type Message<T = string> = {
+export type Message<T = string, C = string> = {
   role: T;
-  content: string;
+  content: C;
 };
 
 export class Roles {
   constructor(public v: RolesType) {}
   replace(text: string) {
-    return text.replace(/{{D}}|{{S}}/g, (match) => {
+    return text.replace(/{{D}}|{{S}}|{{C}}|{{F}}/g, (match) => {
+      if (match === "{{F}}") return this.v.format;
       if (match === "{{D}}") return this.v.ai;
       if (match === "{{S}}") return this.v.system;
       if (match === "{{C}}") return this.v.context;
@@ -53,6 +56,13 @@ export class BuildContext {
     this.samples = samples;
     samples.forEach((s) => (s.content = this.roles.replace(s.content)));
     this.context = removeComments(this.roles.replace(read(context)));
+    this.validateContext();
+  }
+
+  validateContext() {
+    let list = getInteractionsNames().filter((i) => !this.context.includes(i));
+    if (list.length === 0) return;
+    console.log(`🔴 Las siguientes interraciones no estan ${list.join(", ")}.`);
   }
 
   replaceMessages(msgs: Message[]): Message[] {
@@ -68,19 +78,26 @@ export class BuildContext {
     return M(this.roles.v.system, this.context);
   }
 
-  build_unique_prompt = (style: ":" | "#" | "###") => {
+  build_sample(m: Message<string>, style: ":" | "#" | "###") {
+    if (style === ":") return `${m.role}: ${m.content}`;
+    if (style === "#") return `# ${m.role}:\n${m.content}\n`;
+    if (style === "###") return `### ${m.role}:\n${m.content}\n`;
+  }
+
+  build_samples(style: Parameters<typeof this["build_sample"]>[1]) {
     if (style === ":")
-      return `${this.context}\n\n${this.samples
-        .map((m) => `${m.role}: ${m.content}`)
-        .join("\n")}`;
+      return this.samples.map((m) => this.build_sample(m, style)).join("\n");
     if (style === "#")
-      return `${this.context}\n\n${this.samples
-        .map((m) => `# ${m.role}:\n${m.content}\n`)
-        .join("\n")}`;
+      return this.samples.map((m) => this.build_sample(m, style)).join("\n");
     if (style === "###")
-      return `${this.context}\n\n${this.samples
-        .map((m) => `### ${m.role}:\n${m.content}\n`)
-        .join("\n")}`;
+      return this.samples.map((m) => this.build_sample(m, style)).join("\n");
+  }
+
+  build_unique_prompt = (style: Parameters<typeof this["build_sample"]>[1]) => {
+    if (style === ":") return `${this.context}\n\n${this.build_samples(style)}`;
+    if (style === "#") return `${this.context}\n\n${this.build_samples(style)}`;
+    if (style === "###")
+      return `${this.context}\n\n${this.build_samples(style)}`;
     throw 0;
   };
 }

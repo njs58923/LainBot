@@ -5,7 +5,12 @@ import { Samples } from "../resources/samples";
 import { getCircularReplacer, debugLog, getInput } from "../utils";
 import { OpenAI } from "./utils/OpenAI";
 
-export const roles = new Roles({ ai: "AI", system: "App", context: "system" });
+export const roles = new Roles({
+  ai: "AI",
+  system: "App",
+  context: "system",
+  format: Decoder.name,
+});
 
 const ctx = new BuildContext({
   context: "context",
