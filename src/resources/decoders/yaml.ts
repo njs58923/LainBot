@@ -9,7 +9,7 @@ export class YamlDecoder extends BaseDecoder {
   parse(message: string): Inter[] {
     var value: Inter | Inter[];
     message = message.trim();
-    message.replace(/^# ChatGPT:\n/g, "");
+    message = message.replace(/^ChatGPT:(?:\n|\\n)/g, "");
     value = yaml.load(message) as Inter[];
 
     return Array.isArray(value) ? value : [value];
@@ -25,6 +25,7 @@ export class YamlDecoder extends BaseDecoder {
     } catch (error: any) {
       return this.buildResultRaw({ error: error?.message });
     }
+    console.log("🟢", list);
     const result = await this.tryRun(list);
     return this.buildResultRaw(result);
   }
