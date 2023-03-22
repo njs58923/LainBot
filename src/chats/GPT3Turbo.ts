@@ -19,7 +19,7 @@ const generateResponse = async (
       max_tokens: 200,
       top_p: 1,
       frequency_penalty: 0,
-      presence_penalty: 0.6,
+      presence_penalty: 0,
       stop: [`\n${roles.v.system}:`, `\n${roles.v.ai}:`],
     });
   } catch (error: any) {
@@ -62,11 +62,14 @@ export const GPT3Turbo = async () => {
 
   controller.list.forEach((m) => logMessage(m));
 
-  let input = Decoder.createResquest(await getInput("You: "));
+  let input = ctx.build_sample(
+    M(roles.v.system, Decoder.createResquest(await getInput("You: "))),
+    "#"
+  );
 
   await controller.tryLoopInput(
     async () => {
-      return JSON.stringify(input);
+      return input;
     },
     async (raw) => {
       input = await Decoder.tryInteractionRaw(raw);

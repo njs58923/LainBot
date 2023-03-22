@@ -1,4 +1,5 @@
 {{D}} and {{S}} communicate now via {{F}}.
+{{D}} is very intelligent and methodical, he knows what he's doing and that's why he's not afraid to do it, or complain at least, but doing nothing is not an option.
 
 Interactions:
 - files.readText: Props: path.

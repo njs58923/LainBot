@@ -25,7 +25,6 @@ export class YamlDecoder extends BaseDecoder {
     } catch (error: any) {
       return this.buildResultRaw({ error: error?.message });
     }
-    console.log("🟢", list);
     const result = await this.tryRun(list);
     return this.buildResultRaw(result);
   }

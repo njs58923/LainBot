@@ -91,7 +91,11 @@ export const interactions: Record<
     return { message: `Memory '${name}' saved` };
   },
   "memory.load": ({ name }) => {
-    const data = readFileSync(`./memory/${name}.txt`, "utf-8");
+    try {
+      var data = readFileSync(`./memory/${name}.txt`, "utf-8");
+    } catch (error) {
+      return { message: `Memory '${name}' does not exist` };
+    }
     const result = {
       data,
       flap: () => (result.data = (result.data || "").slice(0, 16) + "..."),
@@ -99,7 +103,11 @@ export const interactions: Record<
     return result;
   },
   "memory.delete": ({ name }) => {
-    const data = unlinkSync(`./memory/${name}.txt`);
+    try {
+      unlinkSync(`./memory/${name}.txt`);
+    } catch (error) {
+      return { message: `Memory '${name}' does not exist` };
+    }
     return { message: `Memory '${name}' deleted` };
   },
   "memory.list": () => {
