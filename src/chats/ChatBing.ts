@@ -1,4 +1,5 @@
 import { writeFileSync } from "fs";
+import { Environment } from "../environment";
 import { Decoder, InterRes } from "../interactios";
 import { BingHook } from "../lib/bingHook/bingHook";
 import { BuildContext, Roles } from "../resources/context";
@@ -56,7 +57,7 @@ export const ChatBing = async () => {
   });
 
   const controller = new AloneChatResponse((msg) => generateResponse(msg), {
-    debug: true,
+    debug: Environment.isDebug,
     roles,
   });
 

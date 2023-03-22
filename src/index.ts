@@ -1,4 +1,4 @@
-require("dotenv").config();
+import "./environment";
 // import { ChatBing } from "./chats/ChatBing";
 import { ChatGPT } from "./chats/ChatGPT";
 // import { GPT3Turbo } from "./chats/GPT3Turbo";

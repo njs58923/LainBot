@@ -11,6 +11,7 @@ import axios from "axios";
 import { JsonDecoder } from "./resources/decoders/json";
 import { YamlDecoder } from "./resources/decoders/yaml";
 import { basename } from "path";
+import { MemoryJson } from "./utils/memory";
 
 export type InteractionRaw = string;
 export type Inter = { type: string } & Record<string, unknown>;
@@ -19,6 +20,8 @@ export type InterRes = Record<string, unknown>;
 export const Decoder = new JsonDecoder();
 
 export const ForceStop = Decoder.buildRaw("user.response", { message: "END" });
+
+export const Memory = new MemoryJson();
 
 // Define the interactions that the AI can perform
 export const interactions: Record<
@@ -83,60 +86,34 @@ export const interactions: Record<
       return { error: error.message };
     }
   },
+  "memory.create": ({ name, description }) => {
+    if (!Memory.isExist(name))
+      return { message: `Memory '${name}' does not exist` };
+    Memory.create(name, description);
+    return { message: `Memory '${name}' created` };
+  },
   "memory.save": ({ name, data }) => {
-    writeFileSync(
-      `./memory/${name}.txt`,
-      typeof data === "string" ? data : JSON.stringify(data)
-    );
+    if (!Memory.isExist(name))
+      return { message: `Memory '${name}' does not exist` };
+    Memory.update(name, data);
     return { message: `Memory '${name}' saved` };
   },
   "memory.load": ({ name }) => {
-    try {
-      var data = readFileSync(`./memory/${name}.txt`, "utf-8");
-    } catch (error) {
+    if (!Memory.isExist(name))
       return { message: `Memory '${name}' does not exist` };
-    }
-    const result = {
-      data,
-      flap: () => (result.data = (result.data || "").slice(0, 16) + "..."),
-    };
-    return result;
+    return Memory.load(name);
   },
   "memory.delete": ({ name }) => {
-    try {
-      unlinkSync(`./memory/${name}.txt`);
-    } catch (error) {
+    if (!Memory.isExist(name))
       return { message: `Memory '${name}' does not exist` };
-    }
+    Memory.delete(name);
     return { message: `Memory '${name}' deleted` };
   },
   "memory.list": () => {
-    // Retrieve ids of all notes
-    const notes = readdirSync("./memory");
-    const obj = {};
-    notes.map((path) => {
-      const data = readFileSync(`./memory/${path}`, "utf-8");
-      obj[basename(path, ".txt")] = {
-        preview: truncateText(data, 32),
-        size: data.length,
-      };
-    });
-    return obj;
+    return Memory.list();
   },
   "memory.preview": () => {
-    // Retrieve ids of all notes
-    const notes = readdirSync("./memory");
-    const obj = {};
-    notes
-      .slice(0, 10)
-      .map(
-        (path) =>
-          (obj[basename(path, ".txt")] = truncateText(
-            readFileSync(`./memory/${path}`, "utf-8"),
-            64
-          ))
-      );
-    return obj;
+    return Memory.preview();
   },
   "command.execute": ({ command, location, shell }) => {
     if (shell === "PowerShell") return powershell({ command, location });

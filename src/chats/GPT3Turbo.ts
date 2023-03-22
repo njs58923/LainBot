@@ -1,5 +1,6 @@
 import { writeFileSync } from "fs";
 import { ChatCompletionRequestMessage } from "openai";
+import { Environment } from "../environment";
 import { Decoder, InterRes } from "../interactios";
 import { BuildContext, Message, Roles } from "../resources/context";
 import { Samples } from "../resources/samples";
@@ -57,7 +58,7 @@ export const GPT3Turbo = async () => {
   const controller = new AloneChatResponse(
     (msg, list) =>
       generateResponse(roles, list as any).then((i) => i?.content || ""),
-    { debug: true, roles, initMessages: ctx.build_messages() }
+    { debug: Environment.isDebug, roles, initMessages: ctx.build_messages() }
   );
 
   controller.list.forEach((m) => logMessage(m));

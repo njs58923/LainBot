@@ -28,7 +28,7 @@ export class AloneChatResponse {
     this.list = initMessages;
   }
   async tryGenerate(text: string): Promise<string | undefined> {
-    const m = M(this.roles.v.system, text);
+    let m = M(this.roles.v.system, text);
     this.push(m);
 
     var fake;
@@ -53,7 +53,7 @@ export class AloneChatResponse {
       else if (opt === "3" && this.forceEndPromp) return this.forceEndPromp;
       else if (opt === "4")
         fake = await getInput("Fake (Nada para cancelar): ");
-      else if (opt === "5") return this.tryGenerate("#LAST#");
+      else if (opt === "5") m = M(this.roles.v.system, text);
       else if (opt === "6") process.exit();
       else if (opt) return this.tryGenerate(text);
     }
