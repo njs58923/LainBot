@@ -1,5 +1,6 @@
 import { Inter, InterRes } from "../../interactios";
 import { extractObjects } from "../../utils";
+import { Message } from "../context";
 import { BaseDecoder } from "./base";
 
 export class JsonDecoder extends BaseDecoder {

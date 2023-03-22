@@ -38,9 +38,4 @@ export class YamlDecoder extends BaseDecoder {
     }
     return value;
   }
-
-  parseMessage(message: Message<string, InterRes | InterRes[]>) {
-    (message as any).content = this.buildResultRaw(message.content);
-    return message as any as Message;
-  }
 }

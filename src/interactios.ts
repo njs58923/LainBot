@@ -16,7 +16,7 @@ export type InteractionRaw = string;
 export type Inter = { type: string } & Record<string, unknown>;
 export type InterRes = Record<string, unknown>;
 
-export const Decoder = new YamlDecoder();
+export const Decoder = new JsonDecoder();
 
 export const ForceStop = Decoder.buildRaw("user.response", { message: "END" });
 

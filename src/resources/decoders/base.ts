@@ -11,6 +11,11 @@ export abstract class BaseDecoder {
     return { type, ...props };
   }
 
+  parseMessage(message: Message<string, InterRes | InterRes[]>) {
+    (message as any).content = this.buildResultRaw(message.content);
+    return message as any as Message;
+  }
+
   createResquest(message: string) {
     return this.buildRaw("user.request", { message });
   }
