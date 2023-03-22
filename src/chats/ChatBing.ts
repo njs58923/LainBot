@@ -1,5 +1,5 @@
 import { writeFileSync } from "fs";
-import { Decoder } from "../interactios";
+import { Decoder, InterRes } from "../interactios";
 import { BingHook } from "../lib/bingHook/bingHook";
 import { BuildContext, Roles } from "../resources/context";
 import { SampleInits, Samples } from "../resources/samples";
@@ -42,13 +42,17 @@ export const ChatBing = async () => {
     ai: "IA",
     system: "App",
     context: "system",
-    format: Decoder.name,
   });
 
   const ctx = new BuildContext({
     context: "context2b",
     roles,
-    samples: Samples.simple(roles),
+    samples: Samples.simple(roles).map((m) =>
+      Decoder.parseMessage({
+        role: m.role,
+        content: m.content as InterRes[],
+      })
+    ),
   });
 
   const controller = new AloneChatResponse((msg) => generateResponse(msg), {
@@ -58,7 +62,7 @@ export const ChatBing = async () => {
 
   await controller.tryAutoGenerate(
     roles.replaceAll(
-      ...SampleInits["traslate this"](ctx.build_unique_prompt(":"), {
+      ...SampleInits["traslate this"](await ctx.build_unique_prompt(":"), {
         chatName: "Bing",
       })
     )
