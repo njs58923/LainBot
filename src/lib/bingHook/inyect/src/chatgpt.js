@@ -62,7 +62,19 @@ const waitInput = async () => {
   }
 };
 
-const sendInput = async (content) => {
+const stopButton = () => {
+  let button = querySelector("form button.btn-neutral");
+  if (!button.textContent.includes("Stop generating")) return;
+  button.focus();
+  page_keyboard("\n");
+};
+
+const getLastMessage = () => {
+  let messages = findMessages();
+  return messages[messages.length - 1]?.content || "";
+};
+
+const sendInput = async (content, { stop = [] }) => {
   if (content === "#LAST#") {
     let messages = findMessages();
     return messages[messages.length - 1].content;
@@ -70,12 +82,31 @@ const sendInput = async (content) => {
   querySelector("textarea")?.focus();
   await new Promise((r) => setTimeout(r, 500 + Math.random()));
   page_keyboard(content, true);
-  await waitForSelector("form button.absolute div.text-2xl");
-  await waitNotForSelector("form button.absolute div.text-2xl");
 
-  let messages = findMessages();
+  let isStop = await await new Promise((c) => {
+    let runing = true;
+    (async () => {
+      await new Promise((r) => setTimeout(r, 1000));
+      while (runing) {
+        let msg = getLastMessage();
+        if (stop.some((s) => msg.includes(s))) {
+          stopButton();
+          return c(true);
+        }
+        page_live(msg);
+        await new Promise((r) => setTimeout(r, 100));
+      }
+    })();
 
-  return messages[messages.length - 1].content;
+    (async () => {
+      await waitForSelector("form button.absolute div.text-2xl");
+      await waitNotForSelector("form button.absolute div.text-2xl");
+      runing = false;
+      c(false);
+    })();
+  });
+
+  return getLastMessage();
 };
 
 const waitLoading = async () => {
@@ -85,6 +116,7 @@ const waitLoading = async () => {
 };
 
 window.chatGPT = {
+  stopButton,
   waitLoading,
   findContext,
   findMessages,

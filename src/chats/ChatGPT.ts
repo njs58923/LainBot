@@ -11,9 +11,18 @@ const api = new ChatGPTHook({
   port: 3000,
 });
 
-const generateResponse = async (message) => {
+const generateResponse = async (
+  message,
+  {
+    roles,
+    stream,
+  }: { roles: Roles; stream?: ((msg: string) => void) | undefined }
+) => {
   try {
-    var response = await api.sendMessage(message);
+    var response = await api.sendMessage(message, {
+      stop: [`\n${roles.v.system}:`],
+      stream,
+    });
   } catch (error: any) {
     if (error?.response?.data) console.log(error?.response?.data);
     else console.log(error);
@@ -49,11 +58,14 @@ export const ChatGPT = async () => {
       context: "system",
     });
 
-  const controller = new AloneChatResponse((msg) => generateResponse(msg), {
-    debug: Environment.isDebug,
-    roles,
-    forceEndPromp: ForceStop,
-  });
+  const controller = new AloneChatResponse(
+    (msg, l, s) => generateResponse(msg, { roles, stream: s?.stream }),
+    {
+      debug: Environment.isDebug,
+      roles,
+      forceEndPromp: ForceStop,
+    }
+  );
 
   const ctx = new BuildContext({
     context: "context2",

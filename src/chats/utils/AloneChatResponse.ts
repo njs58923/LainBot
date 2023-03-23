@@ -10,7 +10,11 @@ export class AloneChatResponse {
   roles: Roles;
   forceEndPromp?: string;
   constructor(
-    public generate: (text: string, list: Message[]) => Promise<string>,
+    public generate: (
+      text: string,
+      list: Message[],
+      args?: { stream?: (msg: string) => void }
+    ) => Promise<string>,
     {
       debug = false,
       roles,
@@ -60,7 +64,16 @@ export class AloneChatResponse {
     }
     this.fistInput = false;
 
-    const r = fake || (await this.generate(m.content, this.list));
+    // let stream = "";
+    const r =
+      fake ||
+      (await this.generate(m.content, this.list, {
+        // stream: (msg) => {
+        //   let newPart = msg.slice(stream.length);
+        //   process.stdout.write(newPart);
+        //   stream = msg;
+        // },
+      }));
 
     this.push(M(this.roles.v.ai, r));
     return r;

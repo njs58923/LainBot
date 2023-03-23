@@ -97,7 +97,13 @@ export class BaseHook {
         }
       }
     );
+    this.page.exposeFunction(
+      `page_live`,
+      (msg) => this.stream && this.stream(msg)
+    );
   }
+  stream?: (msg: string) => void;
+  stop?: string[];
 
   promises: Record<string, { r: (...any) => void; e: (...any) => void }> = {};
   promise_cound = 0;
