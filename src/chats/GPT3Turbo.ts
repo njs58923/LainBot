@@ -61,7 +61,7 @@ export const GPT3Turbo = async () => {
     { debug: Environment.isDebug, roles, initMessages: ctx.build_messages() }
   );
 
-  controller.list.forEach((m) => logMessage(m));
+  if (Environment.isDebug) controller.list.forEach((m) => logMessage(m));
 
   let input = ctx.build_sample(
     M(roles.v.system, Decoder.createResquest(await getInput("You: "))),
@@ -73,7 +73,7 @@ export const GPT3Turbo = async () => {
       return input;
     },
     async (raw) => {
-      input = await Decoder.tryInteractionRaw(raw);
+      input = await Decoder.tryInteractionRaw(raw, { roles });
     }
   );
   await getInput("🟦🟦🟦 FIN 🟦🟦🟦");

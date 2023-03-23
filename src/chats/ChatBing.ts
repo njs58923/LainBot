@@ -74,7 +74,7 @@ export const ChatBing = async () => {
   await controller.tryLoopInput(
     async () => JSON.stringify(input),
     async (raw) => {
-      input = await Decoder.tryInteractionRaw(raw);
+      input = await Decoder.tryInteractionRaw(raw, { roles });
     }
   );
 

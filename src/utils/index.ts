@@ -36,16 +36,29 @@ export const LogColor = (color, ...args) => {
   console.log(`\x1b[${color}m`, ...args, "\x1b[0m");
 };
 
-export const logMessage = ({ role, content }) => {
-  console.log("");
-  console.log(
-    "\x1b[32m",
-    `${role}(Raw): `,
-    "\x1b[90m",
-    `${content.replace(/\n/g, "\\n")}`,
-    "\x1b[0m"
-  );
-  console.log("\x1b[94m", `${content}`, "\x1b[0m");
+export const logMessage = ({ role, content, color = 90 }) => {
+  if (Environment.isDebug) {
+    console.log("");
+    console.log(
+      "\x1b[32m",
+      `${role}(Raw): `,
+      "\x1b[90m",
+      `${content.replace(/\n/g, "\\n")}`,
+      "\x1b[0m"
+    );
+    console.log("\x1b[94m", `${content}`, "\x1b[0m");
+  } else {
+    console.log(
+      "\x1b[32m",
+      `${role}: `,
+      `\x1b[${color}m`,
+      `${content}`,
+      "\x1b[0m"
+    );
+  }
+};
+export const inputMessage = ({ role, color = 32 }) => {
+  return getInput(`\x1b[${color}m` + `${role}: `);
 };
 
 export const M = <R = string, A = string>(
@@ -80,7 +93,7 @@ export function extractObjects(str) {
       if (stack.length === 0 && startIdx !== -1) {
         let jsonString = str.slice(startIdx, i + 1);
         try {
-          console.log("🟦", jsonString);
+          if (Environment.isDebug) console.log("🟦", jsonString);
           let obj = JSON.parse(jsonString);
           objects.push(obj);
         } catch (error) {

@@ -3,7 +3,9 @@ import { readdirSync, readFileSync, writeFileSync, unlinkSync } from "fs";
 import {
   extractObjects,
   getInput,
+  inputMessage,
   LogColor,
+  logMessage,
   truncateText,
 } from "./utils/index";
 import { cmd, powershell, runScript } from "./utils/execute";
@@ -12,6 +14,7 @@ import { JsonDecoder } from "./resources/decoders/json";
 import { YamlDecoder } from "./resources/decoders/yaml";
 import { basename } from "path";
 import { MemoryJson } from "./utils/memory";
+import { Roles } from "./resources/context";
 
 export type InteractionRaw = string;
 export type Inter = { type: string } & Record<string, unknown>;
@@ -24,10 +27,9 @@ export const ForceStop = Decoder.buildRaw("user.response", { message: "END" });
 export const Memory = new MemoryJson();
 
 // Define the interactions that the AI can perform
-export const interactions: Record<
-  string,
-  (prop: any) => InterRes | Promise<InterRes>
-> = {
+export const Interactions = (
+  roles: Roles
+): Record<string, (prop: any) => InterRes | Promise<InterRes>> => ({
   "files.list": ({ path }) => {
     try {
       const files = readdirSync(path, { withFileTypes: true }).map((i) => ({
@@ -44,26 +46,39 @@ export const interactions: Record<
     return { status: "OK" };
   },
   "ia.wait": async ({}) => {
-    return { type: "user.request", message: await getInput("🟢 You: ") };
+    await new Promise((c) => setTimeout(c, 100));
+    return {
+      type: "user.request",
+      message: await inputMessage({ role: "You" }),
+    };
   },
   "user.request": async ({ message }) => {
     console.log("");
     LogColor(91, `Solo usuarios pueden usar esto (${message})`);
+    await new Promise((c) => setTimeout(c, 100));
     return {};
   },
   "user.response": async ({ message }) => {
     console.log("");
-    LogColor(92, message);
-    return { type: "user.request", message: await getInput("🟢 You: ") };
+    logMessage({ role: roles.v.ai, content: message, color: 92 });
+    await new Promise((c) => setTimeout(c, 100));
+    return {
+      type: "user.request",
+      message: await inputMessage({ role: "You" }),
+    };
   },
   "user.failed": async ({ message }) => {
     console.log("");
-    LogColor(91, message);
-    return { type: "user.request", message: await getInput("🟢 You: ") };
+    logMessage({ role: roles.v.ai, content: message, color: 91 });
+    await new Promise((c) => setTimeout(c, 100));
+    return {
+      type: "user.request",
+      message: await inputMessage({ role: "You" }),
+    };
   },
   "user.report": ({ message }) => {
     console.log("");
-    LogColor(96, message);
+    logMessage({ role: roles.v.ai, content: message, color: 96 });
     return {};
   },
   "files.readText": ({ path }) => {
@@ -155,17 +170,20 @@ export const interactions: Record<
       });
     });
   },
-};
+});
 
 export const getInteractionsNames = () => {
-  return Object.keys(interactions);
+  return Object.keys(
+    Interactions(new Roles({ ai: "A", context: "B", system: "C" }))
+  );
 };
 
 export const TryInteraction = (
   type: string,
-  props: object
+  props: object,
+  { roles }: { roles: Roles }
 ): InterRes | Promise<InterRes> => {
-  if (!interactions[type])
-    throw new Error(`Interaction type "${type}" not supported.`);
-  return interactions[type](props);
+  const ins = Interactions(roles);
+  if (!ins[type]) throw new Error(`Interaction type "${type}" not supported.`);
+  return ins[type](props);
 };

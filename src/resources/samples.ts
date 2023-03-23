@@ -1,4 +1,4 @@
-import { Inter } from "../interactios";
+import { Decoder, Inter } from "../interactios";
 import { M } from "../utils";
 import { Roles, RolesType } from "./context";
 
@@ -36,6 +36,10 @@ export const Samples = {
     {
       role: roles.v.ai,
       content: [{ type: "user.response", message: "Son las 17:56:45" }],
+    },
+    {
+      role: roles.v.system,
+      content: [{ type: "user.request", message: "Buenas {{D}}, presentate." }],
     },
   ],
   multiFile: (roles: Roles) => [
@@ -113,7 +117,7 @@ export const SampleInits = {
     "perfecto, ahora tú puedes simular ser {{D}} y yo {{S}}, asi puedes ayudarme a resolver problemas complejos.\nY aclaro, no quiero nada mas que uno solo ChatGPT: y sus interaciones, nada mas, no comentarios, no anotaciones, no avisos, no posibles resultadaos de la interacion, nada excepto tus interaciones.\n te parece bien?\npd: recuerda usar report de vez en cuando para ir informando y no respondas hasta terminar o fallar.\npd2: las interaciones se ejecutan todas al mismo tiempo, así que no puedes usar los resultado de una hasta que Bridge responda.",
   ],
   "quiero que actues": (context: string, { chatName }) => [
-    "quiero que actues como {{D}} y yo {{S}}, asi puedes ayudarme como asistente con problemas mas complejos.\nY aclaro, no quiero nada mas que uno solo {{D}}: y sus interaciones en {{F}}, nada mas, no comentarios, no anotaciones, no avisos, no posibles resultadaos de la interacion, nada excepto tus interaciones.\npd: recuerda usar report de vez en cuando para ir informando y no respondas hasta terminar o fallar.\npd2: las interaciones se ejecutan todas al mismo tiempo, así que no puedes usar los resultado de una hasta que {{S}} responda.\n\n " +
+    "quiero que actues como {{D}} y yo {{S}}, asi puedes ayudarme como asistente con problemas mas complejos, las interaciones tienen prioridad sobre los comandos.\nY aclaro, no quiero nada mas que uno solo {{D}}: y sus interaciones en {{F}}, nada mas, no comentarios, no anotaciones, no avisos, no posibles resultadaos de la interacion, nada excepto tus interaciones.\npd: recuerda usar report de vez en cuando para tareas largas, y no respondas hasta terminar o fallar.\npd2: las interaciones se ejecutan todas al mismo tiempo, así que no puedes usar los resultado de una hasta que {{S}} responda.\n\n " +
       context,
   ],
 };

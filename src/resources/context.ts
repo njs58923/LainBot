@@ -1,4 +1,4 @@
-import { Decoder, getInteractionsNames, interactions } from "../interactios";
+import { Decoder, getInteractionsNames, Interactions } from "../interactios";
 import { LogColor, M } from "../utils";
 
 const fs = require("fs");
@@ -97,7 +97,9 @@ export class BuildContext {
         this.build_sample(
           M(
             "Memory",
-            Decoder.buildResultRaw(await interactions["memory.preview"]({}))
+            Decoder.buildResultRaw(
+              await Interactions(this.roles)["memory.preview"]({})
+            )
           ),
           style
         ) || ""

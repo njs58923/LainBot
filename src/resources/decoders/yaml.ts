@@ -1,6 +1,6 @@
 import yaml from "js-yaml";
 import { Inter, InterRes } from "../../interactios";
-import { Message } from "../context";
+import { Message, Roles } from "../context";
 import { BaseDecoder } from "./base";
 
 export class YamlDecoder extends BaseDecoder {
@@ -19,13 +19,16 @@ export class YamlDecoder extends BaseDecoder {
     return yaml.dump(result, { replacer: this.replacer });
   }
 
-  async tryInteractionRaw(message: string): Promise<string> {
+  async tryInteractionRaw(
+    message: string,
+    { roles }: { roles: Roles }
+  ): Promise<string> {
     try {
       var list = this.parse(message);
     } catch (error: any) {
       return this.buildResultRaw({ error: error?.message });
     }
-    const result = await this.tryRun(list);
+    const result = await this.tryRun(list, { roles });
     return this.buildResultRaw(result);
   }
   buildRaw(type: string, props: object): string {

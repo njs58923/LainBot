@@ -1,6 +1,7 @@
 import { Message, Roles, RolesType } from "../../resources/context";
 import { M, logMessage, debugLog, getInput } from "../../utils";
 import { encode } from "gpt-3-encoder";
+import { Environment } from "../../environment";
 
 export class AloneChatResponse {
   list: Message[] = [];
@@ -67,7 +68,7 @@ export class AloneChatResponse {
 
   push(m: Message) {
     this.list.push(m);
-    logMessage(m);
+    if (Environment.isDebug) logMessage(m);
   }
 
   async tryAutoGenerate(list: string[], hook?: (m: string) => string) {

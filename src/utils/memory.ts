@@ -74,9 +74,10 @@ export class MemoryJson {
     const notes = readdirSync(this.Path.getFolder());
     const obj: Record<string, MemoPreview> = {};
     notes.map((path) => {
-      const data = this.read(path);
+      const nameFile = basename(path, this.Path.ext);
+      const data = this.read(nameFile);
       delete (data as any).data;
-      obj[basename(path, this.Path.ext)] = data;
+      obj[nameFile] = data;
     });
     return obj;
   }

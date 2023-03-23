@@ -1,9 +1,12 @@
 import { Inter, InterRes, TryInteraction } from "../../interactios";
-import { Message } from "../context";
+import { Message, Roles } from "../context";
 
 export abstract class BaseDecoder {
   abstract name: string;
-  abstract tryInteractionRaw(message: string): Promise<string>;
+  abstract tryInteractionRaw(
+    message: string,
+    { roles }: { roles: Roles }
+  ): Promise<string>;
   abstract buildRaw(type: string, props: object): string;
   abstract buildResultRaw(result: InterRes | InterRes[]): string;
 
@@ -20,7 +23,7 @@ export abstract class BaseDecoder {
     return this.buildRaw("user.request", { message });
   }
 
-  async tryRun(inters: Inter[]) {
+  async tryRun(inters: Inter[], { roles }: { roles: Roles }) {
     const result = await Promise.all(
       inters.map(async (value, key) => {
         if (typeof value !== "object")
@@ -33,7 +36,7 @@ export abstract class BaseDecoder {
         try {
           return {
             id: id || `index:${key}`,
-            ...(await TryInteraction(type, properties)),
+            ...(await TryInteraction(type, properties, { roles })),
           } as InterRes;
         } catch (error: any) {
           return { id: id || `index:${key}`, error: error.message } as InterRes;

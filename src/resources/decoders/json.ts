@@ -1,6 +1,6 @@
 import { Inter, InterRes } from "../../interactios";
 import { extractObjects } from "../../utils";
-import { Message } from "../context";
+import { Message, Roles } from "../context";
 import { BaseDecoder } from "./base";
 
 export class JsonDecoder extends BaseDecoder {
@@ -30,14 +30,14 @@ export class JsonDecoder extends BaseDecoder {
     throw new Error(`The response is not a valid JSON`);
   }
 
-  async tryInteractionRaw(raw: string) {
+  async tryInteractionRaw(raw: string, { roles }: { roles: Roles }) {
     try {
       var interaction = this.parse(raw);
     } catch (error: any) {
       return this.buildResultRaw({ error: error?.message });
     }
 
-    return this.buildResultRaw(await this.tryRun(interaction));
+    return this.buildResultRaw(await this.tryRun(interaction, { roles }));
   }
 }
 
