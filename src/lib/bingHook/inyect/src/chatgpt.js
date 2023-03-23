@@ -67,6 +67,7 @@ const stopButton = () => {
   if (!button.textContent.includes("Stop generating")) return;
   button.focus();
   page_keyboard("\n");
+  return true;
 };
 
 const getLastMessage = () => {
@@ -86,15 +87,14 @@ const sendInput = async (content, { stop = [] }) => {
   let isStop = await await new Promise((c) => {
     let runing = true;
     (async () => {
-      await new Promise((r) => setTimeout(r, 1000));
+      await new Promise((r) => setTimeout(r, 250));
       while (runing) {
         let msg = getLastMessage();
         if (stop.some((s) => msg.includes(s))) {
-          stopButton();
-          return c(true);
+          if (stopButton()) c(true);
         }
         page_live(msg);
-        await new Promise((r) => setTimeout(r, 100));
+        await new Promise((r) => setTimeout(r, 25));
       }
     })();
 

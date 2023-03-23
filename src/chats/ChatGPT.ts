@@ -4,7 +4,7 @@ import { Decoder, ForceStop, Inter, InterRes } from "../interactios";
 import { ChatGPTHook } from "../lib/bingHook/chatGPTHook";
 import { BuildContext, Roles } from "../resources/context";
 import { SampleInits, Samples } from "../resources/samples";
-import { getCircularReplacer, getInput, M } from "../utils";
+import { getCircularReplacer, getInput, inputMessage, M } from "../utils";
 import { AloneChatResponse } from "./utils/AloneChatResponse";
 
 const api = new ChatGPTHook({
@@ -20,7 +20,7 @@ const generateResponse = async (
 ) => {
   try {
     var response = await api.sendMessage(message, {
-      stop: [`\n${roles.v.system}:`],
+      stop: [`${roles.v.system}:\n`],
       stream,
     });
   } catch (error: any) {
@@ -87,7 +87,10 @@ export const ChatGPT = async () => {
   );
 
   let input = ctx.build_sample(
-    M(roles.v.system, Decoder.createResquest(await getInput("You: "))),
+    M(
+      roles.v.system,
+      Decoder.createResquest(await inputMessage({ role: "You" }))
+    ),
     "#"
   );
 

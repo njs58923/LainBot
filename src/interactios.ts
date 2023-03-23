@@ -54,9 +54,12 @@ export const Interactions = (
   },
   "user.request": async ({ message }) => {
     console.log("");
-    LogColor(91, `Solo usuarios pueden usar esto (${message})`);
+    logMessage({ role: roles.v.ai, content: message, color: 92 });
     await new Promise((c) => setTimeout(c, 100));
-    return {};
+    return {
+      type: "user.request",
+      message: await inputMessage({ role: "You" }),
+    };
   },
   "user.response": async ({ message }) => {
     console.log("");

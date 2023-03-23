@@ -119,6 +119,7 @@ export const SampleInits = {
   "quiero que actues": (context: string, { chatName }) => [
     "quiero que actues como {{D}} y yo {{S}}, asi puedes ayudarme como asistente con problemas mas complejos, las interaciones tienen prioridad sobre los comandos.\nY aclaro, no quiero nada mas que uno solo {{D}}: y sus interaciones en {{F}}, nada mas, no comentarios, no anotaciones, no avisos, no posibles resultadaos de la interacion, nada excepto tus interaciones.\npd: recuerda usar report de vez en cuando para tareas largas, y no respondas hasta terminar o fallar.\npd2: las interaciones se ejecutan todas al mismo tiempo, así que no puedes usar los resultado de una hasta que {{S}} responda.\n\n " +
       context,
+    "Revisa tus recordatorios",
   ],
 };
 

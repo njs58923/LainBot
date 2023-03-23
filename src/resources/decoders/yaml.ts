@@ -6,10 +6,10 @@ import { BaseDecoder } from "./base";
 export class YamlDecoder extends BaseDecoder {
   name: string = "YAML";
 
-  parse(message: string): Inter[] {
+  parse({ roles }: { roles: Roles }, message: string): Inter[] {
     var value: Inter | Inter[];
     message = message.trim();
-    message = message.replace(/^ChatGPT:(?:\n|\\n)/g, "");
+    message = message.replace(new RegExp(`/^${roles.v.ai}:(?:\n|\\n)/g`), "");
     value = yaml.load(message) as Inter[];
 
     return Array.isArray(value) ? value : [value];
@@ -24,7 +24,7 @@ export class YamlDecoder extends BaseDecoder {
     { roles }: { roles: Roles }
   ): Promise<string> {
     try {
-      var list = this.parse(message);
+      var list = this.parse({ roles }, message);
     } catch (error: any) {
       return this.buildResultRaw({ error: error?.message });
     }

@@ -58,7 +58,7 @@ export const logMessage = ({ role, content, color = 90 }) => {
   }
 };
 export const inputMessage = ({ role, color = 32 }) => {
-  return getInput(`\x1b[${color}m` + `${role}: `);
+  return getInput(` \x1b[${color}m` + `${role}: `);
 };
 
 export const M = <R = string, A = string>(
@@ -93,7 +93,7 @@ export function extractObjects(str) {
       if (stack.length === 0 && startIdx !== -1) {
         let jsonString = str.slice(startIdx, i + 1);
         try {
-          if (Environment.isDebug) console.log("🟦", jsonString);
+          // if (Environment.isDebug) console.log("🟦", jsonString);
           let obj = JSON.parse(jsonString);
           objects.push(obj);
         } catch (error) {

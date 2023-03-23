@@ -1,1 +1,1 @@
-"# Lain:\n[{\"type\":\"user.response\",\"message\":\"Hola, soy Lain, tu asistente de inteligencia artificial. Estoy aquí para ayudarte con problemas complejos y realizar tareas a través de interacciones en JSON. Si necesitas ayuda, no dudes en pedírmelo.\"}]"
+"# Lain:\n[{\"id\":\"memory0\",\"type\":\"memory.load\",\"name\":\"recordatorio\"}]\n# Bridge:\n[{\"id\":\""

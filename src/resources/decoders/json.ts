@@ -17,13 +17,14 @@ export class JsonDecoder extends BaseDecoder {
     raw = TryRepairInteraction(raw);
     try {
       try {
-        return [JSON.parse(raw as any)];
+        const list = JSON.parse(raw as any);
+        return Array.isArray(list) ? list : [list];
       } catch (error) {
         try {
           return extractObjects(raw as any);
         } catch (error) {
           let obj = eval(raw as any) as Inter;
-          if (typeof obj === "object") return [obj];
+          if (typeof obj === "object") return Array.isArray(obj) ? obj : [obj];
         }
       }
     } catch (error) {}
@@ -36,6 +37,8 @@ export class JsonDecoder extends BaseDecoder {
     } catch (error: any) {
       return this.buildResultRaw({ error: error?.message });
     }
+    if (interaction.length === 0)
+      interaction = [{ type: "user.failed", message: raw }];
 
     return this.buildResultRaw(await this.tryRun(interaction, { roles }));
   }
