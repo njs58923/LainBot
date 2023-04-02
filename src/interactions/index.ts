@@ -24,7 +24,7 @@ export const Decoder = new JsonDecoder();
 
 export const ForceStop = Decoder.buildRaw("user.response", { message: "END" });
 
-export const Memory = new MemoryJson();
+export const Memory = new MemoryJson("base");
 
 // Define the interactions that the AI can perform
 export const Interactions = ({

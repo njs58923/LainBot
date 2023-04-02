@@ -18,11 +18,11 @@ type Memo = {
 type MemoPreview = Omit<Memo, "data">;
 
 export class MemoryJson {
-  constructor() {}
+  constructor(public id: string) {}
 
   Path = {
     getFilePath: (name) => `${this.Path.getFolder()}/${name}${this.Path.ext}`,
-    getFolder: () => "./memory",
+    getFolder: () => "./memory/" + this.id,
     ext: ".json",
   };
 

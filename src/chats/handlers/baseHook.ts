@@ -81,7 +81,7 @@ export class BaseHook {
     this.page.exposeFunction(
       `page_keyboard`,
       async (text: string, jumpLine = false) => {
-        if (!jumpLine) await this.page.keyboard.type(text);
+        if (!jumpLine) await this.page.keyboard.type(text, { delay: 0 });
         else {
           let list = text.split("\n");
           for (let index = 0; index < list.length; index++) {
@@ -91,9 +91,9 @@ export class BaseHook {
               await this.page.keyboard.press("Enter");
               await this.page.keyboard.up("Shift");
             }
-            await this.page.keyboard.type(text);
+            await this.page.keyboard.type(text, { delay: 0 });
           }
-          if (jumpLine) await this.page.keyboard.type("\n");
+          if (jumpLine) await this.page.keyboard.type("\n", { delay: 0 });
         }
       }
     );

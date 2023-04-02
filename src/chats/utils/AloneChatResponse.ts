@@ -45,7 +45,7 @@ export class AloneChatResponse {
         await getInput(
           `🔴 Debug: ${
             encode(m.content).length
-          } tokens \n   1: omitir\n   2: editar\n   3: force end\n   4: fake\n   5: capture\n   6: salir\n  option: `
+          } tokens \n   1: Omitir\n   2: Editar\n   3: Forzar final\n   4: Reemplazar respuesta\n   5: Capturar ultimo respuesta\n   6: Salir\n  Opciones: `
         )
       )
         .toLocaleLowerCase()
@@ -59,7 +59,7 @@ export class AloneChatResponse {
         );
       else if (opt === "3" && this.forceEndPromp) return this.forceEndPromp;
       else if (opt === "4")
-        fake = await getInput("Fake (Nada para cancelar): ");
+        fake = await getInput("Reemplazar respuesta (Nada para cancelar): ");
       else if (opt === "5") m = M(this.roles.v.system, text);
       else if (opt === "6") process.exit();
       else if (opt) return this.tryGenerate(text);
