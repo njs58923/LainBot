@@ -7,14 +7,14 @@ import {
   LogColor,
   logMessage,
   truncateText,
-} from "./utils/index";
-import { cmd, powershell, runScript } from "./utils/execute";
+} from "../utils/index";
+import { cmd, powershell, runScript } from "../utils/execute";
 import axios from "axios";
-import { JsonDecoder } from "./resources/decoders/json";
-import { YamlDecoder } from "./resources/decoders/yaml";
+import { JsonDecoder } from "../resources/decoders/json";
+import { YamlDecoder } from "../resources/decoders/yaml";
 import { basename } from "path";
-import { MemoryJson } from "./utils/memory";
-import { Roles } from "./resources/context";
+import { MemoryJson } from "../utils/memory";
+import { Roles } from "../resources/context";
 
 export type InteractionRaw = string;
 export type Inter = { type: string } & Record<string, unknown>;

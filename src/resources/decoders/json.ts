@@ -1,4 +1,4 @@
-import { Inter, InterRes } from "../../interactios";
+import { Inter, InterRes } from "../../interactions";
 import { extractObjects } from "../../utils";
 import { Message, Roles } from "../context";
 import { BaseDecoder } from "./base";

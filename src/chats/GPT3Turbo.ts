@@ -1,7 +1,7 @@
 import { writeFileSync } from "fs";
 import { ChatCompletionRequestMessage } from "openai";
-import { Environment } from "../environment";
-import { Decoder, InterRes } from "../interactios";
+import { Env } from "../environment";
+import { Decoder, InterRes } from "../interactions";
 import { BuildContext, Message, Roles } from "../resources/context";
 import { Samples } from "../resources/samples";
 import { getCircularReplacer, logMessage, getInput, M } from "../utils";
@@ -58,10 +58,10 @@ export const GPT3Turbo = async () => {
   const controller = new AloneChatResponse(
     (msg, list) =>
       generateResponse(roles, list as any).then((i) => i?.content || ""),
-    { debug: Environment.isDebug, roles, initMessages: ctx.build_messages() }
+    { debug: Env.isDebug, roles, initMessages: ctx.build_messages() }
   );
 
-  if (Environment.isDebug) controller.list.forEach((m) => logMessage(m));
+  if (Env.isDebug) controller.list.forEach((m) => logMessage(m));
 
   let input = ctx.build_sample(
     M(roles.v.system, Decoder.createResquest(await getInput("You: "))),

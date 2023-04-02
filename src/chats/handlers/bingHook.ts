@@ -1,10 +1,11 @@
+import { Env } from "../../environment";
 import { BaseHook } from "./baseHook";
 
 export class BingHook extends BaseHook {
   async createConnection({ browserURL }) {
     const { hasInyect } = await super.createConnection({
       browserURL,
-      goto: "https://edgeservices.bing.com/edgesvc/chat?clients%E2%80%A68acd7ddfb54f190b3f26f2eeb8bb41720&darkschemeovr=1",
+      goto: Env.BING_WEB_HOOK,
     });
     if (!hasInyect) {
       console.log("Loading Page...");

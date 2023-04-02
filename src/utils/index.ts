@@ -1,7 +1,7 @@
 import { createInterface } from "readline";
 import { Message } from "../resources/context";
 import JSONbig from "json-bigint";
-import { Environment } from "../environment";
+import { Env } from "../environment";
 const rl = createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -30,14 +30,14 @@ export const getCircularReplacer = () => {
 };
 
 export const debugLog = (...args) => {
-  if (Environment.isDebug) LogColor(90, ...args);
+  if (Env.isDebug) LogColor(90, ...args);
 };
 export const LogColor = (color, ...args) => {
   console.log(`\x1b[${color}m`, ...args, "\x1b[0m");
 };
 
 export const logMessage = ({ role, content, color = 90 }) => {
-  if (Environment.isDebug) {
+  if (Env.isDebug) {
     console.log("");
     console.log(
       "\x1b[32m",

@@ -1,4 +1,4 @@
-import { Decoder, getInteractionsNames, Interactions } from "../interactios";
+import { Decoder, getInteractionsNames, Interactions } from "../interactions";
 import { LogColor, M } from "../utils";
 
 const fs = require("fs");

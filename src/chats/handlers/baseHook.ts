@@ -40,7 +40,7 @@ export class BaseHook {
       if (!hasInyect) {
         await this.inyectFile("node_modules/tslib/tslib.js");
         await new Promise((r) => setTimeout(r, 500 + Math.random()));
-        await this.inyectFile("src/lib/bingHook/inyect/dist/bundle.js");
+        await this.inyectFile("src/chats/handlers/inyect/dist/bundle.js");
       }
       this.exposeFunction();
       return { hasInyect };

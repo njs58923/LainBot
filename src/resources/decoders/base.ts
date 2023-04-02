@@ -1,4 +1,4 @@
-import { Inter, InterRes, TryInteraction } from "../../interactios";
+import { Inter, InterRes, TryInteraction } from "../../interactions";
 import { Message, Roles } from "../context";
 
 export abstract class BaseDecoder {

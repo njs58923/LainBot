@@ -1,4 +1,4 @@
-import { Decoder, Inter } from "../interactios";
+import { Decoder, Inter } from "../interactions";
 import { M } from "../utils";
 import { Roles, RolesType } from "./context";
 

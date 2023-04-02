@@ -1,5 +1,5 @@
 import yaml from "js-yaml";
-import { Inter, InterRes } from "../../interactios";
+import { Inter, InterRes } from "../../interactions";
 import { Message, Roles } from "../context";
 import { BaseDecoder } from "./base";
 

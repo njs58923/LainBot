@@ -1,7 +1,7 @@
 import { exec, spawn, ChildProcessWithoutNullStreams } from "child_process";
 import { PowerShell } from "node-powershell";
 import shellEscape from "shell-escape";
-import { InterRes } from "../interactios";
+import { InterRes } from "../interactions";
 
 let powershellProcess: PowerShell = undefined as any;
 

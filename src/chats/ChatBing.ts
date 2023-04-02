@@ -1,7 +1,7 @@
 import { writeFileSync } from "fs";
-import { Environment } from "../environment";
-import { Decoder, InterRes } from "../interactios";
-import { BingHook } from "../lib/bingHook/bingHook";
+import { Env } from "../environment";
+import { Decoder, InterRes } from "../interactions";
+import { BingHook } from "./handlers/bingHook";
 import { BuildContext, Roles } from "../resources/context";
 import { SampleInits, Samples } from "../resources/samples";
 import {
@@ -36,7 +36,7 @@ const generateResponse = async (message: string) => {
 
 export const ChatBing = async () => {
   await api.createConnection({
-    browserURL: "http://127.0.0.1:21222",
+    browserURL: Env.BROWSER_HOOK_URL,
   });
 
   const roles = new Roles({
@@ -57,7 +57,7 @@ export const ChatBing = async () => {
   });
 
   const controller = new AloneChatResponse((msg) => generateResponse(msg), {
-    debug: Environment.isDebug,
+    debug: Env.isDebug,
     roles,
   });
 

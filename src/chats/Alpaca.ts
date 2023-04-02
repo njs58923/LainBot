@@ -1,5 +1,5 @@
 import { writeFileSync } from "fs";
-import { Decoder, InterRes } from "../interactios";
+import { Decoder, InterRes } from "../interactions";
 import { BuildContext, Roles } from "../resources/context";
 import { SampleInits, Samples } from "../resources/samples";
 import {

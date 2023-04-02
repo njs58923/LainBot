@@ -1,7 +1,7 @@
 import { writeFileSync } from "fs";
-import { Environment } from "../environment";
-import { Decoder, ForceStop, Inter, InterRes } from "../interactios";
-import { ChatGPTHook } from "../lib/bingHook/chatGPTHook";
+import { Env } from "../environment";
+import { Decoder, ForceStop, Inter, InterRes } from "../interactions";
+import { ChatGPTHook } from "./handlers/chatGPTHook";
 import { BuildContext, Roles } from "../resources/context";
 import { SampleInits, Samples } from "../resources/samples";
 import { getCircularReplacer, getInput, inputMessage, M } from "../utils";
@@ -39,7 +39,7 @@ const generateResponse = async (
 
 export const ChatGPT = async () => {
   await api.createConnection({
-    browserURL: "http://127.0.0.1:21222",
+    browserURL: Env.BROWSER_HOOK_URL,
   });
 
   let roles: Roles = undefined as any;
@@ -61,7 +61,7 @@ export const ChatGPT = async () => {
   const controller = new AloneChatResponse(
     (msg, l, s) => generateResponse(msg, { roles, stream: s?.stream }),
     {
-      debug: Environment.isDebug,
+      debug: Env.isDebug,
       roles,
       forceEndPromp: ForceStop,
     }
