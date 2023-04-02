@@ -2,11 +2,12 @@ import { writeFileSync } from "fs";
 import { ChatCompletionRequestMessage } from "openai";
 import { Env } from "../environment";
 import { Decoder, InterRes } from "../interactions";
-import { BuildContext, Message, Roles } from "../resources/context";
+import { BuildContext, Message } from "../resources/context";
 import { Samples } from "../resources/samples";
 import { getCircularReplacer, logMessage, getInput, M } from "../utils";
 import { AloneChatResponse } from "./utils/AloneChatResponse";
 import { OpenAI } from "./utils/OpenAI";
+import { Roles } from "../resources/utils/Roles";
 
 const generateResponse = async (
   roles: Roles,

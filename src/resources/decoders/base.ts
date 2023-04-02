@@ -1,5 +1,6 @@
 import { Inter, InterRes, TryInteraction } from "../../interactions";
-import { Message, Roles } from "../context";
+import { Message } from "../context";
+import { Roles } from "../utils/Roles";
 
 export abstract class BaseDecoder {
   abstract name: string;

@@ -1,9 +1,10 @@
 import { writeFileSync } from "fs";
 import { Decoder, InterRes } from "../interactions";
-import { BuildContext, Roles } from "../resources/context";
+import { BuildContext } from "../resources/context";
 import { Samples } from "../resources/samples";
 import { getCircularReplacer, debugLog, getInput } from "../utils";
 import { OpenAI } from "./utils/OpenAI";
+import { Roles } from "../resources/utils/Roles";
 
 export const roles = new Roles({
   ai: "AI",

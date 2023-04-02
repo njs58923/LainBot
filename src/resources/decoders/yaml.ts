@@ -1,7 +1,8 @@
 import yaml from "js-yaml";
 import { Inter, InterRes } from "../../interactions";
-import { Message, Roles } from "../context";
+import { Message } from "../context";
 import { BaseDecoder } from "./base";
+import { Roles } from "../utils/Roles";
 
 export class YamlDecoder extends BaseDecoder {
   name: string = "YAML";

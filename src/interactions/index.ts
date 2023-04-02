@@ -14,7 +14,7 @@ import { JsonDecoder } from "../resources/decoders/json";
 import { YamlDecoder } from "../resources/decoders/yaml";
 import { basename } from "path";
 import { MemoryJson } from "../utils/memory";
-import { Roles } from "../resources/context";
+import { Roles } from "../resources/utils/Roles";
 
 export type InteractionRaw = string;
 export type Inter = { type: string } & Record<string, unknown>;

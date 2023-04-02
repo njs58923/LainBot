@@ -1,6 +1,7 @@
 import { Inter, InterRes } from "../../interactions";
 import { extractObjects } from "../../utils";
-import { Message, Roles } from "../context";
+import { Message } from "../context";
+import { Roles } from "../utils/Roles";
 import { BaseDecoder } from "./base";
 
 export class JsonDecoder extends BaseDecoder {

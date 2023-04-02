@@ -2,10 +2,11 @@ import { writeFileSync } from "fs";
 import { Env } from "../environment";
 import { Decoder, ForceStop, Inter, InterRes } from "../interactions";
 import { ChatGPTHook } from "./handlers/chatGPTHook";
-import { BuildContext, Roles } from "../resources/context";
+import { BuildContext } from "../resources/context";
 import { SampleInits, Samples } from "../resources/samples";
 import { getCircularReplacer, getInput, inputMessage, M } from "../utils";
 import { AloneChatResponse } from "./utils/AloneChatResponse";
+import { Roles } from "../resources/utils/Roles";
 
 const api = new ChatGPTHook({
   port: 3000,

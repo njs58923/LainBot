@@ -1,6 +1,6 @@
 import { writeFileSync } from "fs";
 import { Decoder, InterRes } from "../interactions";
-import { BuildContext, Roles } from "../resources/context";
+import { BuildContext } from "../resources/context";
 import { SampleInits, Samples } from "../resources/samples";
 import {
   logMessage,
@@ -10,6 +10,7 @@ import {
   M,
 } from "../utils";
 import { AloneChatResponse } from "./utils/AloneChatResponse";
+import { Roles } from "../resources/utils/Roles";
 
 const generateResponse = async (message: string) => {
   try {

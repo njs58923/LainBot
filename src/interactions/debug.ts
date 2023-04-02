@@ -1,5 +1,5 @@
 import { Decoder } from ".";
-import { Roles } from "../resources/context";
+import { Roles } from "../resources/utils/Roles";
 import { getInput, LogColor, logMessage, M } from "../utils";
 
 var interaction_debug = async () => {

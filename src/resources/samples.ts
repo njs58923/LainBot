@@ -1,6 +1,6 @@
 import { Decoder, Inter } from "../interactions";
 import { M } from "../utils";
-import { Roles, RolesType } from "./context";
+import { Roles } from "./utils/Roles";
 
 export const Samples = {
   simple: (roles: Roles) => [

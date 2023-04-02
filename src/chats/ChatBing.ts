@@ -2,7 +2,7 @@ import { writeFileSync } from "fs";
 import { Env } from "../environment";
 import { Decoder, InterRes } from "../interactions";
 import { BingHook } from "./handlers/bingHook";
-import { BuildContext, Roles } from "../resources/context";
+import { BuildContext } from "../resources/context";
 import { SampleInits, Samples } from "../resources/samples";
 import {
   logMessage,
@@ -12,6 +12,7 @@ import {
   M,
 } from "../utils";
 import { AloneChatResponse } from "./utils/AloneChatResponse";
+import { Roles } from "../resources/utils/Roles";
 
 const api = new BingHook({
   port: 3000,

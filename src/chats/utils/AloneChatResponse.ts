@@ -1,8 +1,9 @@
-import { Message, Roles, RolesType } from "../../resources/context";
+import { Message } from "../../resources/context";
 import { M, logMessage, debugLog, getInput, LogColor } from "../../utils";
 import { encode } from "gpt-3-encoder";
 import { Env } from "../../environment";
 import { Decoder } from "../../interactions";
+import { Roles } from "../../resources/utils/Roles";
 
 export class AloneChatResponse {
   list: Message[] = [];
