@@ -1,6 +1,5 @@
 import { createInterface } from "readline";
 import { Message } from "../resources/context";
-import JSONbig from "json-bigint";
 import { Env } from "../environment";
 const rl = createInterface({
   input: process.stdin,
@@ -18,7 +17,7 @@ export const getInput = (prompt) => {
 
 export const getCircularReplacer = () => {
   const seen = new WeakSet();
-  return (key, value) => {
+  return (_, value) => {
     if (typeof value === "object" && value !== null) {
       if (seen.has(value)) {
         return;

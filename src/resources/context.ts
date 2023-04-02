@@ -65,6 +65,7 @@ export class BuildContext {
     if (style === ":") return `${m.role}: ${m.content}`;
     if (style === "#") return `# ${m.role}:\n${m.content}`;
     if (style === "###") return `### ${m.role}:\n${m.content}\n`;
+    throw new Error("Option style not valid");
   }
 
   build_samples(style: Parameters<typeof this["build_sample"]>[1]) {

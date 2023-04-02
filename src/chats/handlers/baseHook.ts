@@ -1,7 +1,6 @@
 import puppeteer, { Browser, Page } from "puppeteer";
 import fs from "fs";
 import { debugLog } from "../../utils";
-
 export class BaseHook {
   constructor(public setting: { port: number }) {}
   browser: Browser = undefined as any;
@@ -80,22 +79,17 @@ export class BaseHook {
     });
     this.page.exposeFunction(
       `page_keyboard`,
+      //@ts-ignore
       async (text: string, jumpLine = false) => {
-        if (!jumpLine) {
-          await this.page.keyboard.type(text);
-        } else {
-          let list = text.split(/\n/);
-          for (let index = 0; index < list.length; index++) {
-            const text = list[index];
-            if (index > 0) {
-              await this.page.keyboard.down("Shift");
-              await this.page.keyboard.press("Enter");
-              await this.page.keyboard.up("Shift");
-            }
-            await this.page.keyboard.type(text.replace("\r", ""));
-          }
-          await this.page.keyboard.type("\n");
-        }
+        const clipboard = (await import("clipboardy")).default;
+        const value = clipboard.readSync();
+        clipboard.writeSync(text);
+        await this.page.keyboard.down("ControlLeft");
+        await this.page.keyboard.press("KeyV");
+        await this.page.keyboard.up("ControlLeft");
+        clipboard.writeSync(value);
+        await new Promise((r) => setTimeout(r, 100 + Math.random() * 200));
+        await this.page.keyboard.type("\n");
       }
     );
     this.page.exposeFunction(

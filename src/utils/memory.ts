@@ -6,7 +6,6 @@ import {
   unlinkSync,
 } from "fs";
 import { basename } from "path";
-import { truncateText } from ".";
 
 type Memo = {
   data: object | string;

@@ -1,6 +1,6 @@
 import { writeFileSync } from "fs";
 import { Env } from "../environment";
-import { Decoder, ForceStop, Inter, InterRes } from "../interactions";
+import { Decoder, ForceStop, InterRes } from "../interactions";
 import { ChatGPTHook } from "./handlers/chatGPTHook";
 import { BuildContext } from "../resources/context";
 import { SampleInits, Samples } from "../resources/samples";
@@ -60,7 +60,7 @@ export const ChatGPT = async () => {
     });
 
   const controller = new AloneChatResponse(
-    (msg, l, s) => generateResponse(msg, { roles, stream: s?.stream }),
+    (msg, _, s) => generateResponse(msg, { roles, stream: s?.stream }),
     {
       debug: Env.isDebug,
       roles,

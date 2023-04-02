@@ -1,4 +1,3 @@
-import { roles } from "../ChatDavinci";
 import { BaseHook } from "./baseHook";
 
 export class ChatGPTHook extends BaseHook {

@@ -1,18 +1,8 @@
-import { exec, spawn, ChildProcessWithoutNullStreams } from "child_process";
-import { readdirSync, readFileSync, writeFileSync, unlinkSync } from "fs";
-import {
-  extractObjects,
-  getInput,
-  inputMessage,
-  LogColor,
-  logMessage,
-  truncateText,
-} from "../utils/index";
+import { readdirSync, readFileSync, writeFileSync } from "fs";
+import { inputMessage, logMessage, truncateText } from "../utils/index";
 import { cmd, powershell, runScript } from "../utils/execute";
 import axios from "axios";
 import { JsonDecoder } from "../resources/decoders/json";
-import { YamlDecoder } from "../resources/decoders/yaml";
-import { basename } from "path";
 import { MemoryJson } from "../utils/memory";
 import { Roles } from "../resources/utils/Roles";
 
@@ -167,7 +157,7 @@ export const Interactions = ({
     }
   },
   eval: async ({ lang, script }) => {
-    return new Promise<InterRes>((resolve, reject) => {
+    return new Promise<InterRes>((resolve) => {
       runScript(lang, script, (error, result) => {
         if (error) {
           resolve({ error: error.message });

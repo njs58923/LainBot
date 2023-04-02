@@ -1,6 +1,5 @@
 import { Inter, InterRes } from "../../interactions";
 import { extractObjects } from "../../utils";
-import { Message } from "../context";
 import { Roles } from "../utils/Roles";
 import { BaseDecoder } from "./base";
 
