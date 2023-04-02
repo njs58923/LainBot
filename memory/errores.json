@@ -1,9 +1,0 @@
-{
-  "data": {
-    "nota1": "No se puede utilizar {{ xxx }} en ninguna parte ya que no está soportado.",
-    "nota2": "Recuerda que puedo ejecutar comandos para realizar tareas.",
-    "nota3": "No era necesario volver a cargar la memoria ya que tenía el valor previamente.",
-    "nota4": "Evitar redundancia al usar user.report y user.response juntos."
-  },
-  "description": "errores que no repetir"
-}
