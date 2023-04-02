@@ -16,7 +16,8 @@ export type Message<T = string, C = string> = {
   content: C;
 };
 
-export const removeComments = (text: string) => text.replace(/^\/\/.*\n/gm, "");
+export const removeComments = (text: string) =>
+  text.replace(/^\/\/[^\n]*\n/gm, "");
 
 export class BuildContext {
   context: string;
@@ -34,14 +35,17 @@ export class BuildContext {
     this.roles = roles;
     this.samples = samples;
     samples.forEach((s) => (s.content = this.roles.replace(s.content)));
-    this.context = removeComments(this.roles.replace(read(context)));
+    this.context = this.roles.replace(removeComments(read(context)));
     this.validateContext();
   }
 
   validateContext() {
     let list = getInteractionsNames().filter((i) => !this.context.includes(i));
     if (list.length === 0) return;
-    LogColor(91, `Las siguientes interraciones no estan ${list.join(", ")}.`);
+    LogColor(
+      91,
+      `Las siguientes interraciones no estan en el contexto ${list.join(", ")}.`
+    );
   }
 
   replaceMessages(msgs: Message[]): Message[] {
