@@ -1,7 +1,8 @@
 import { Message, Roles, RolesType } from "../../resources/context";
-import { M, logMessage, debugLog, getInput } from "../../utils";
+import { M, logMessage, debugLog, getInput, LogColor } from "../../utils";
 import { encode } from "gpt-3-encoder";
 import { Environment } from "../../environment";
+import { Decoder } from "../../interactios";
 
 export class AloneChatResponse {
   list: Message[] = [];
@@ -90,7 +91,14 @@ export class AloneChatResponse {
       const text = list.shift();
       if (!text) break;
       const replace = hook ? await hook(text) : null;
-      if (replace || text) await this.tryGenerate(replace || text);
+      if (replace || text) {
+        const result = await this.tryGenerate(replace || text);
+        if (result)
+          await Decoder.tryInteractionRaw(result, {
+            roles: this.roles,
+            noInput: true,
+          });
+      }
     }
   }
 

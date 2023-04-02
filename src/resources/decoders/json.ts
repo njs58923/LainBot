@@ -31,7 +31,10 @@ export class JsonDecoder extends BaseDecoder {
     throw new Error(`The response is not a valid JSON`);
   }
 
-  async tryInteractionRaw(raw: string, { roles }: { roles: Roles }) {
+  async tryInteractionRaw(
+    raw: string,
+    { roles, noInput }: { roles: Roles; noInput: boolean }
+  ) {
     try {
       var interaction = this.parse(raw);
     } catch (error: any) {
@@ -40,7 +43,9 @@ export class JsonDecoder extends BaseDecoder {
     if (interaction.length === 0)
       interaction = [{ type: "user.failed", message: raw }];
 
-    return this.buildResultRaw(await this.tryRun(interaction, { roles }));
+    return this.buildResultRaw(
+      await this.tryRun(interaction, { roles, noInput })
+    );
   }
 }
 

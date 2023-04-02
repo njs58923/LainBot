@@ -27,9 +27,13 @@ export const ForceStop = Decoder.buildRaw("user.response", { message: "END" });
 export const Memory = new MemoryJson();
 
 // Define the interactions that the AI can perform
-export const Interactions = (
-  roles: Roles
-): Record<string, (prop: any) => InterRes | Promise<InterRes>> => ({
+export const Interactions = ({
+  noInput,
+  roles,
+}: {
+  roles: Roles;
+  noInput: boolean;
+}): Record<string, (prop: any) => InterRes | Promise<InterRes>> => ({
   "files.list": ({ path }) => {
     try {
       const files = readdirSync(path, { withFileTypes: true }).map((i) => ({
@@ -49,7 +53,7 @@ export const Interactions = (
     await new Promise((c) => setTimeout(c, 100));
     return {
       type: "user.request",
-      message: await inputMessage({ role: "You" }),
+      message: noInput ? "" : await inputMessage({ role: "You" }),
     };
   },
   "user.request": async ({ message }) => {
@@ -58,7 +62,7 @@ export const Interactions = (
     await new Promise((c) => setTimeout(c, 100));
     return {
       type: "user.request",
-      message: await inputMessage({ role: "You" }),
+      message: noInput ? "" : await inputMessage({ role: "You" }),
     };
   },
   "user.response": async ({ message }) => {
@@ -67,7 +71,7 @@ export const Interactions = (
     await new Promise((c) => setTimeout(c, 100));
     return {
       type: "user.request",
-      message: await inputMessage({ role: "You" }),
+      message: noInput ? "" : await inputMessage({ role: "You" }),
     };
   },
   "user.failed": async ({ message }) => {
@@ -76,7 +80,7 @@ export const Interactions = (
     await new Promise((c) => setTimeout(c, 100));
     return {
       type: "user.request",
-      message: await inputMessage({ role: "You" }),
+      message: noInput ? "" : await inputMessage({ role: "You" }),
     };
   },
   "user.report": ({ message }) => {
@@ -177,16 +181,19 @@ export const Interactions = (
 
 export const getInteractionsNames = () => {
   return Object.keys(
-    Interactions(new Roles({ ai: "A", context: "B", system: "C" }))
+    Interactions({
+      roles: new Roles({ ai: "A", context: "B", system: "C" }),
+      noInput: false,
+    })
   );
 };
 
 export const TryInteraction = (
   type: string,
   props: object,
-  { roles }: { roles: Roles }
+  { roles, noInput }: { roles: Roles; noInput: boolean }
 ): InterRes | Promise<InterRes> => {
-  const ins = Interactions(roles);
+  const ins = Interactions({ roles, noInput });
   if (!ins[type]) throw new Error(`Interaction type "${type}" not supported.`);
   return ins[type](props);
 };

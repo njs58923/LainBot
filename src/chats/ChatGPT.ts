@@ -98,7 +98,10 @@ export const ChatGPT = async () => {
     async () => input,
     async (raw: string) => {
       input = ctx.build_sample(
-        M(roles.v.system, await Decoder.tryInteractionRaw(raw, { roles })),
+        M(
+          roles.v.system,
+          await Decoder.tryInteractionRaw(raw, { roles, noInput: false })
+        ),
         "#"
       );
     }

@@ -98,7 +98,9 @@ export class BuildContext {
           M(
             "Memory",
             Decoder.buildResultRaw(
-              await Interactions(this.roles)["memory.preview"]({})
+              await Interactions({ roles: this.roles, noInput: false })[
+                "memory.preview"
+              ]({})
             )
           ),
           style

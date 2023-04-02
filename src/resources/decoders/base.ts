@@ -23,7 +23,10 @@ export abstract class BaseDecoder {
     return this.buildRaw("user.request", { message });
   }
 
-  async tryRun(inters: Inter[], { roles }: { roles: Roles }) {
+  async tryRun(
+    inters: Inter[],
+    { roles, noInput }: { roles: Roles; noInput: boolean }
+  ) {
     const result = await Promise.all(
       inters.map(async (value, key) => {
         if (typeof value !== "object")
@@ -36,7 +39,7 @@ export abstract class BaseDecoder {
         try {
           return {
             id: id || `index:${key}`,
-            ...(await TryInteraction(type, properties, { roles })),
+            ...(await TryInteraction(type, properties, { roles, noInput })),
           } as InterRes;
         } catch (error: any) {
           return { id: id || `index:${key}`, error: error.message } as InterRes;

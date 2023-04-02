@@ -57,6 +57,9 @@ export const ChatDavinci = async () => {
     prompt += "\n" + new_prompt + `\n${roles.v.ai}: `;
     let response = await generateResponse(prompt);
     debugLog(`${roles.v.ai}: ${response}`);
-    input = await Decoder.tryInteractionRaw(response as string, { roles });
+    input = await Decoder.tryInteractionRaw(response as string, {
+      roles,
+      noInput: false,
+    });
   }
 };

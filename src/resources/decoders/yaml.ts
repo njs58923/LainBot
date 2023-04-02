@@ -21,14 +21,14 @@ export class YamlDecoder extends BaseDecoder {
 
   async tryInteractionRaw(
     message: string,
-    { roles }: { roles: Roles }
+    { roles, noInput }: { roles: Roles; noInput: boolean }
   ): Promise<string> {
     try {
       var list = this.parse({ roles }, message);
     } catch (error: any) {
       return this.buildResultRaw({ error: error?.message });
     }
-    const result = await this.tryRun(list, { roles });
+    const result = await this.tryRun(list, { roles, noInput });
     return this.buildResultRaw(result);
   }
   buildRaw(type: string, props: object): string {

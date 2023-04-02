@@ -73,7 +73,7 @@ export const GPT3Turbo = async () => {
       return input;
     },
     async (raw) => {
-      input = await Decoder.tryInteractionRaw(raw, { roles });
+      input = await Decoder.tryInteractionRaw(raw, { roles, noInput: false });
     }
   );
   await getInput("🟦🟦🟦 FIN 🟦🟦🟦");
