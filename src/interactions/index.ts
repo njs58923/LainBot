@@ -2,9 +2,10 @@ import { readdirSync, readFileSync, writeFileSync } from "fs";
 import { inputMessage, logMessage, truncateText } from "../utils/index";
 import { cmd, powershell, runScript } from "../utils/execute";
 import axios from "axios";
-import { JsonDecoder } from "../resources/decoders/json";
+// import { JsonDecoder } from "../resources/decoders/json";
 import { MemoryJson } from "../utils/memory";
 import { Roles } from "../resources/utils/Roles";
+import { JsonDecoder } from "../resources/decoders/json";
 
 export type InteractionRaw = string;
 export type Inter = { type: string } & Record<string, unknown>;

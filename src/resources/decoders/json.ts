@@ -13,6 +13,10 @@ export class JsonDecoder extends BaseDecoder {
     return this.buildResultRaw(this.build(type, props));
   }
 
+  getStop({ roles }: { roles: Roles }) {
+    return [`${roles.v.system}:\n`];
+  }
+
   parse(raw: string): Inter[] {
     raw = TryRepairInteraction(raw);
     try {

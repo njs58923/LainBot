@@ -65,8 +65,7 @@ const waitInput = async () => {
 const stopButton = () => {
   let button = querySelector("form button.btn-neutral");
   if (!button.textContent.includes("Stop generating")) return;
-  button.focus();
-  page_keyboard("\n");
+  page_click("form button.btn-neutral");
   return true;
 };
 
@@ -81,13 +80,13 @@ const sendInput = async (content, { stop = [] }) => {
     return messages[messages.length - 1].content;
   }
   querySelector("textarea")?.focus();
-  await new Promise((r) => setTimeout(r, 500 + Math.random()));
+  await new Promise((r) => setTimeout(r, 10 + Math.random()));
   page_keyboard(content, true);
 
   let isStop = await await new Promise((c) => {
     let runing = true;
     (async () => {
-      await new Promise((r) => setTimeout(r, 250));
+      await new Promise((r) => setTimeout(r, 25));
       while (runing) {
         let msg = getLastMessage();
         if (stop.some((s) => msg.includes(s))) {

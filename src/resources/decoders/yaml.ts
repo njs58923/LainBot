@@ -1,6 +1,5 @@
 import yaml from "js-yaml";
 import { Inter, InterRes } from "../../interactions";
-import { Message } from "../context";
 import { BaseDecoder } from "./base";
 import { Roles } from "../utils/Roles";
 
@@ -20,6 +19,10 @@ export class YamlDecoder extends BaseDecoder {
     return yaml.dump(result, { replacer: this.replacer });
   }
 
+  getStop({ roles }: { roles: Roles }) {
+    return [`${roles.v.system}:\n`];
+  }
+
   async tryInteractionRaw(
     message: string,
     { roles, noInput }: { roles: Roles; noInput: boolean }
@@ -36,6 +39,7 @@ export class YamlDecoder extends BaseDecoder {
     return this.buildResultRaw([{ type, ...props }]);
   }
 
+  //@ts-ignore
   replacer(key, value) {
     if (typeof value === "function") {
       return undefined;

@@ -30,7 +30,7 @@ export abstract class BaseDecoder {
   ) {
     const result = await Promise.all(
       inters.map(async (value, key) => {
-        if (typeof value !== "object")
+        if (typeof value !== "object" || !value)
           return {
             id: `index:${key}`,
             error: "Invalid interaction.",

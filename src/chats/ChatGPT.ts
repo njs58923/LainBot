@@ -21,7 +21,7 @@ const generateResponse = async (
 ) => {
   try {
     var response = await api.sendMessage(message, {
-      stop: [`${roles.v.system}:\n`],
+      stop: Decoder.getStop({ roles }),
       stream,
     });
   } catch (error: any) {
