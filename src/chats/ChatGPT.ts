@@ -7,6 +7,8 @@ import { SampleInits, Samples } from "../resources/samples";
 import { getCircularReplacer, getInput, inputMessage, M } from "../utils";
 import { AloneChatResponse } from "./utils/AloneChatResponse";
 import { Roles } from "../resources/utils/Roles";
+import { InputInteractions } from "../controller/VoiceAndSpeech";
+import { InputKeyboard } from "../controller/InputKeyboard";
 
 const api = new ChatGPTHook({
   port: 3000,
@@ -87,26 +89,15 @@ export const ChatGPT = async () => {
     )
   );
 
-  let input = ctx.build_sample(
-    M(
-      roles.v.system,
-      Decoder.createResquest(await inputMessage({ role: "You" }))
-    ),
-    "#"
-  );
+  const a1 = new InputKeyboard()
+
+  const a2 = new InputInteractions(a1,ctx, "#")
 
   await controller.tryLoopInput(
-    async () => input,
-    async (raw: string) => {
-      input = ctx.build_sample(
-        M(
-          roles.v.system,
-          await Decoder.tryInteractionRaw(raw, { roles, noInput: false })
-        ),
-        "#"
-      );
-    }
+    () => a2.input(),
+    (raw: string) => a2.output(raw)
   );
+  
   await getInput("🟦🟦🟦 FIN 🟦🟦🟦");
 
   process.exit(0);

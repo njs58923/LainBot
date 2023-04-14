@@ -4,12 +4,11 @@ import { Decoder, ForceStop, InterRes } from "../interactions";
 import { BuildContext } from "../resources/context";
 //@ts-ignore
 import { SampleInits, Samples } from "../resources/samples";
-import { getCircularReplacer, getInput, M } from "../utils";
+import { getCircularReplacer, getInput } from "../utils";
 import { AloneChatResponse } from "./utils/AloneChatResponse";
 import { Roles } from "../resources/utils/Roles";
 import { ChatMWKVHook } from "./handlers/ChatMWKVHook";
-import { RecordingEvent } from "../records/index2";
-import { Speech } from "../Speech";
+import { VoiceAndSpeech } from "../controller/VoiceAndSpeech";
 
 export type AutoText = {
   segments: Array<{
@@ -97,38 +96,14 @@ export const ChatMWKV = async () => {
   //   )
   // );
   
-  let WaitMessage:(msg:string)=>void;
-  
-  RecordingEvent((base64Data)=>{
-    // inputMessage({ role: "You" })
-    api.client.emit("audio", base64Data)
-    
-    api.client.on('audio_text', (value:AutoText)=>{
-        let message = value.segments.map(i=> i.text).join("\n");
-        WaitMessage(message)
-    });
-
-  })
-
-  const input = async ()=>{
-    console.log("")
-    let message = await(new Promise<string>((message)=>{
-      WaitMessage = message
-    }))
-    console.log(message+"\n")
-    return ctx.build_sample(M(roles.v.system, Decoder.createResquest(message)),"")
-  }
-
+  const ux = new VoiceAndSpeech(api.client);
 
   await controller.tryLoopInput(
-    async () => await input (),
+    () => ux.input(),
     //@ts-ignore
-    async (raw: string) => {
-      Speech(raw)
-      // input = await  inputMessage({ role: "You" });
-      // input = ctx.build_sample(M(roles.v.system, await Decoder.tryInteractionRaw(raw, { roles, noInput: false })),":");
-    }
+    (raw: string) => ux.output(raw)
   );
+
   await getInput("🟦🟦🟦 FIN 🟦🟦🟦");
 
 };
