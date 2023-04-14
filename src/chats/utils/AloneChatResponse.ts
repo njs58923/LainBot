@@ -9,6 +9,7 @@ export class AloneChatResponse {
   list: Message[] = [];
   fistInput = false;
   debug = false;
+  hasStream = false;
   roles: Roles;
   forceEndPromp?: string;
   constructor(
@@ -18,11 +19,13 @@ export class AloneChatResponse {
       args?: { stream?: (msg: string) => void }
     ) => Promise<string>,
     {
+      stream,
       debug = false,
       roles,
       initMessages = [],
       forceEndPromp,
     }: {
+      stream?: boolean;
       debug?: boolean;
       roles: Roles;
       initMessages?: Message[];
@@ -30,6 +33,7 @@ export class AloneChatResponse {
     }
   ) {
     this.forceEndPromp = forceEndPromp;
+    this.hasStream = stream;
     this.debug = debug;
     this.roles = roles;
     this.list = initMessages;
@@ -66,15 +70,13 @@ export class AloneChatResponse {
     }
     this.fistInput = false;
 
-    // let stream = "";
+    if(this.hasStream) logMessage({...M(this.roles.v.ai, ""), noEnd: (...args:string[])=> process.stdout.write(args.join(""))})
     const r =
       fake ||
       (await this.generate(m.content, this.list, {
-        // stream: (msg) => {
-        //   let newPart = msg.slice(stream.length);
-        //   process.stdout.write(newPart);
-        //   stream = msg;
-        // },
+        stream: (newPart) => {
+          if(this.hasStream) process.stdout.write(newPart);
+        },
       }));
 
     this.push(M(this.roles.v.ai, r));
@@ -83,7 +85,7 @@ export class AloneChatResponse {
 
   push(m: Message) {
     this.list.push(m);
-    if (Env.isDebug) logMessage(m);
+    if (Env.isDebug && !this.hasStream) logMessage(m);
   }
 
   async tryAutoGenerate(list: string[], hook?: (m: string) => string) {

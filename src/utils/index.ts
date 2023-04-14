@@ -35,21 +35,21 @@ export const LogColor = (color, ...args) => {
   console.log(`\x1b[${color}m`, ...args, "\x1b[0m");
 };
 
-export const logMessage = ({ role, content, color = 90 }) => {
+export const logMessage = ({ role, content, color = 90, noEnd: customLog = console.log }) => {
   if (Env.isDebug) {
-    console.log("");
-    console.log(
+    customLog("");
+    customLog(
       "\x1b[32m",
       `${role}(Raw): `,
       "\x1b[90m",
       `${content.replace(/\n/g, "\\n")}`,
       "\x1b[0m"
     );
-    console.log("\x1b[94m", `${content}`, "\x1b[0m");
+    customLog("\x1b[94m", `${content}`, "\x1b[0m");
   } else {
-    console.log(
+    customLog(
       "\x1b[32m",
-      `${role}: `,
+      ` ${role}: `,
       `\x1b[${color}m`,
       `${content}`,
       "\x1b[0m"

@@ -39,7 +39,7 @@ const generateResponse = async (
 };
 
 export const ChatGPT = async () => {
-  await api.createConnection({
+  await api.init({
     browserURL: Env.BROWSER_HOOK_URL,
   });
 

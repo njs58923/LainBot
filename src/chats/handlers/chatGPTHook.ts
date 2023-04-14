@@ -1,7 +1,12 @@
 import { BaseHook } from "./baseHook";
 
-export class ChatGPTHook extends BaseHook {
-  async createConnection({ browserURL }) {
+export interface GenericChatBot {
+  init(...args:any):Promise<any>
+  sendMessage(message: string, args: { stream?: (msg: string) => void; stop?: string[] }):Promise<string>
+}
+
+export class ChatGPTHook extends BaseHook implements GenericChatBot {
+  async init({ browserURL }) {
     const { hasInyect } = await super.createConnection({
       browserURL,
       goto: "https://chat.openai.com/",

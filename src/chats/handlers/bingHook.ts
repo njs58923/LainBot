@@ -1,8 +1,9 @@
 import { Env } from "../../environment";
 import { BaseHook } from "./baseHook";
+import { GenericChatBot } from "./chatGPTHook";
 
-export class BingHook extends BaseHook {
-  async createConnection({ browserURL }) {
+export class BingHook extends BaseHook implements GenericChatBot {
+  async init({ browserURL }) {
     const { hasInyect } = await super.createConnection({
       browserURL,
       goto: Env.BING_WEB_HOOK,

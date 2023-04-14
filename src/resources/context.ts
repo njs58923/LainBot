@@ -61,10 +61,11 @@ export class BuildContext {
     return M(this.roles.v.system, this.context);
   }
 
-  build_sample(m: Message<string>, style: ":" | "#" | "###") {
+  build_sample(m: Message<string>, style: ":" | "#" | "###" | "") {
     if (style === ":") return `${m.role}: ${m.content}`;
     if (style === "#") return `# ${m.role}:\n${m.content}`;
     if (style === "###") return `### ${m.role}:\n${m.content}\n`;
+    if (style === "") return m.content;
     throw new Error("Option style not valid");
   }
 

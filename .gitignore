@@ -4,3 +4,4 @@ dist
 .env
 memory/**/*
 last_response.json
+build

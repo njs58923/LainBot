@@ -79,6 +79,16 @@ export const Interactions = ({
     logMessage({ role: roles.v.ai, content: message, color: 96 });
     return {};
   },
+  "browser.open": ({ url }) => {
+    var start =
+      process.platform == "darwin"
+        ? "open"
+        : process.platform == "win32"
+        ? "start"
+        : "xdg-open";
+    require("child_process").exec(start + " " + url);
+    return {};
+  },
   "files.readText": ({ path }) => {
     try {
       const data = readFileSync(path, "utf-8");

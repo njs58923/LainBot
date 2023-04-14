@@ -1,6 +1,7 @@
 import puppeteer, { Browser, Page } from "puppeteer";
 import fs from "fs";
 import { debugLog } from "../../utils";
+
 export class BaseHook {
   constructor(public setting: { port: number }) {}
   browser: Browser = undefined as any;

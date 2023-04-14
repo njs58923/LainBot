@@ -65,7 +65,8 @@ const waitInput = async () => {
 const stopButton = () => {
   let button = querySelector("form button.btn-neutral");
   if (!button.textContent.includes("Stop generating")) return;
-  page_click("form button.btn-neutral");
+  button.focus();
+  page_keyboard("\n\r");
   return true;
 };
 

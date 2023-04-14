@@ -36,7 +36,7 @@ const generateResponse = async (message: string) => {
 };
 
 export const ChatBing = async () => {
-  await api.createConnection({
+  await api.init({
     browserURL: Env.BROWSER_HOOK_URL,
   });
 

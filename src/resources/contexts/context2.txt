@@ -5,13 +5,14 @@ Interactions:
 - files.readText: Read file text. Props: path.
 - files.writeText: Write file text. Props: path, data.
 - files.list: list files in folder. Props: path.
+- browser.open: Props: url.
 //- ia.test: tests connection, returns OK.
 //- ia.wait: wait user.request.
 //- ia.reload: reloads {{D}} code.
 - user.request: task request from {{S}} to {{D}}. Props: message.
 - user.response: same as user.report but only used when {{D}} has finished the target. Props: message.
 - user.failed: same as user.report but only used when {{D}} couldn't finish the target. Props: message.
-- user.report: sends update from {{D}} to user during process. Props: message.
+- user.report: sends update from {{D}} to user during process. Props: message.aa
 - command.execute: executes command and returns result. Props: command, location, shell (PowerShell or CMD).
 - eval: execute expression and return the result. Props: script, lang(JS or PYTHON).
 - net.httpGet: to send an HTTP GET request to a URL with optional headers and parameters.
