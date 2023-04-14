@@ -4,7 +4,7 @@ import { Decoder, ForceStop, InterRes } from "../interactions";
 import { BuildContext } from "../resources/context";
 //@ts-ignore
 import { SampleInits, Samples } from "../resources/samples";
-import { getCircularReplacer, getInput, inputMessage, M } from "../utils";
+import { getCircularReplacer, getInput, M } from "../utils";
 import { AloneChatResponse } from "./utils/AloneChatResponse";
 import { Roles } from "../resources/utils/Roles";
 import { ChatMWKVHook } from "./handlers/ChatMWKVHook";
@@ -100,7 +100,7 @@ export const ChatMWKV = async () => {
   let WaitMessage:(msg:string)=>void;
   
   RecordingEvent((base64Data)=>{
-    inputMessage({ role: "You" })
+    // inputMessage({ role: "You" })
     api.client.emit("audio", base64Data)
     
     api.client.on('audio_text', (value:AutoText)=>{
@@ -111,6 +111,7 @@ export const ChatMWKV = async () => {
   })
 
   const input = async ()=>{
+    console.log("")
     let message = await(new Promise<string>((message)=>{
       WaitMessage = message
     }))

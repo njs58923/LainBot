@@ -1,12 +1,15 @@
 import { createInterface } from "readline";
 import { Message } from "../resources/context";
 import { Env } from "../environment";
-const rl = createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+
+let rl:any;
 
 export const getInput = (prompt) => {
+  if(!rl) rl = createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
   console.log("");
   return new Promise<string>((resolve) => {
     rl.question(prompt, (answer) => {
