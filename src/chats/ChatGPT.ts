@@ -4,11 +4,11 @@ import { Decoder, ForceStop, InterRes } from "../interactions";
 import { ChatGPTHook } from "./handlers/chatGPTHook";
 import { BuildContext } from "../resources/context";
 import { SampleInits, Samples } from "../resources/samples";
-import { getCircularReplacer, getInput, inputMessage, M } from "../utils";
+import { getCircularReplacer, getInput } from "../utils";
 import { AloneChatResponse } from "./utils/AloneChatResponse";
 import { Roles } from "../resources/utils/Roles";
-import { InputInteractions } from "../controller/VoiceAndSpeech";
-import { InputKeyboard } from "../controller/InputKeyboard";
+import { InputInteractions, VoiceAndSpeech } from "../controller/VoiceAndSpeech";
+import { PythonManager } from "./handlers/ChatMWKVHook";
 
 const api = new ChatGPTHook({
   port: 3000,
@@ -70,32 +70,36 @@ export const ChatGPT = async () => {
     }
   );
 
-  const ctx = new BuildContext({
-    context: "context2",
-    roles,
-    samples: Samples.simple(roles).map((m) =>
-      Decoder.parseMessage({
-        role: m.role,
-        content: m.content as InterRes[],
-      })
-    ),
-  });
+  // const ctx = new BuildContext({
+  //   context: "context2",
+  //   roles,
+  //   samples: Samples.simple(roles).map((m) =>
+  //     Decoder.parseMessage({
+  //       role: m.role,
+  //       content: m.content as InterRes[],
+  //     })
+  //   ),
+  // });
 
-  await controller.tryAutoGenerate(
-    roles.replaceAll(
-      ...SampleInits["quiero que actues"](await ctx.build_unique_prompt("#"), {
-        chatName: "chatbot",
-      })
-    )
-  );
+  // await controller.tryAutoGenerate(
+  //   roles.replaceAll(
+  //     ...SampleInits["quiero que actues"](await ctx.build_unique_prompt("#"), {
+  //       chatName: "chatbot",
+  //     })
+  //   )
+  // );
 
-  const a1 = new InputKeyboard()
+  const a0 = new PythonManager()
 
-  const a2 = new InputInteractions(a1,ctx, "#")
+  const a1 = new VoiceAndSpeech(a0.socket)
+
+  // const a2 = new InputInteractions(a1,ctx, "#")
+
+  await a0.start()
 
   await controller.tryLoopInput(
-    () => a2.input(),
-    (raw: string) => a2.output(raw)
+    () => a1.input(),
+    (raw: string) => a1.output(raw)
   );
   
   await getInput("🟦🟦🟦 FIN 🟦🟦🟦");

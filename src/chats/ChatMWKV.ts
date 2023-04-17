@@ -7,7 +7,7 @@ import { SampleInits, Samples } from "../resources/samples";
 import { getCircularReplacer, getInput } from "../utils";
 import { AloneChatResponse } from "./utils/AloneChatResponse";
 import { Roles } from "../resources/utils/Roles";
-import { ChatMWKVHook } from "./handlers/ChatMWKVHook";
+import { ChatMWKVHook, PythonManager } from "./handlers/ChatMWKVHook";
 import { VoiceAndSpeech } from "../controller/VoiceAndSpeech";
 
 export type AutoText = {
@@ -28,17 +28,25 @@ export const ChatMWKV = async () => {
 
   let roles: Roles = undefined as any;
 
-  let role = 1;
+  let role = 2;
   if (0 === role)
     roles = new Roles({
       ai: "IA",
       system: "App",
       context: "system",
     });
+
   if (1 === role)
     roles = new Roles({
       ai: "Lain",
       system: "Bridge",
+      context: "system",
+    });
+
+  if (2 === role)
+    roles = new Roles({
+      system: "Q",
+      ai: "A",
       context: "system",
     });
 
@@ -53,7 +61,7 @@ export const ChatMWKV = async () => {
     );
 
     const ctx = new BuildContext({
-      context: "simple_chat",
+      context: "simple_chat_corto",
       roles,
       samples: Samples.simple(roles).map((m) =>
         Decoder.parseMessage({
@@ -63,8 +71,11 @@ export const ChatMWKV = async () => {
       ),
     });
 
+    const a0 = new PythonManager()
+
     await api.init({
-      context: await ctx.build_unique_prompt(":")
+      context: await ctx.build_unique_prompt(":"),
+      python: a0
     });
 
     const generateResponse = async (message, {stream}) => {
@@ -96,7 +107,10 @@ export const ChatMWKV = async () => {
   //   )
   // );
   
-  const ux = new VoiceAndSpeech(api.client);
+
+  const ux = new VoiceAndSpeech(a0.socket);
+
+  await a0.start()
 
   await controller.tryLoopInput(
     () => ux.input(),

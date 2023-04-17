@@ -10,7 +10,7 @@
     "build:pkg": "pkg . -o ./build",
     "dev": "nodemon --exec ts-node src/index.ts",
     "test": "ts-node src/interaction_debug.ts",
-    "start": "ts-node src/index.ts",
+    "start": "ts-node --project tsconfig.json src/index.ts ",
     "prelink": "npm run build",
     "prepublishOnly": "npm run build"
   },

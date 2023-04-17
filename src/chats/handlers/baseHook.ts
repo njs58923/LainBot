@@ -1,6 +1,7 @@
 import puppeteer, { Browser, Page } from "puppeteer";
 import fs from "fs";
 import { debugLog } from "../../utils";
+const fsp = require('fs').promises;
 
 export class BaseHook {
   constructor(public setting: { port: number }) {}
@@ -22,27 +23,86 @@ export class BaseHook {
   }
 
   async createConnection({ browserURL, goto }) {
+    console.log(browserURL)
+
+    const userAgent =
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36 Edg/113.0.1774.9';
+
     const connect = async () => {
-      this.browser = await puppeteer.connect({
-        browserURL,
-        defaultViewport: null,
+      this.browser = await puppeteer.launch({ headless: false, args: [
+        '--disable-blink-features=AutomationControlled', // Desactiva la función de control de automatización
+        '--no-sandbox', // Desactiva el modo de aislamiento del proceso
+        '--disable-setuid-sandbox', // Desactiva el aislamiento basado en el usuario
+      ] });
+      this.page = await this.browser.newPage();
+      
+      process.on('SIGINT', () => {
+        console.log('SIGINT recibido. Cerrando el navegador...');
+        this.page.close().then(() => {
+          process.exit(0);
+        });
       });
-      let pages = await this.browser.pages();
-      const allPages = pages.map((p) => ({ page: p, url: p.url() }));
-      const existPage = allPages.find((i) => i.url.includes(goto))?.page;
-      if (existPage) {
-        this.page = existPage;
-      } else {
-        this.page = await this.browser.newPage();
-        this.page.goto(goto);
+
+      process.on('SIGTERM', () => {
+        console.log('SIGTERM recibido. Cerrando el navegador...');
+        this.page.close().then(() => {
+          process.exit(0);
+        });
+      });
+  
+      try {
+        const cookiesString = await fsp.readFile('./cookies.json');
+        const cookies = JSON.parse(cookiesString);
+        await this.page.setCookie(...cookies);
+      } catch (error) {
+        console.log('No se encontraron cookies guardadas');
       }
+      // Carga el localStorage guardado previamente, si existe
+      try {
+        const localStorageString = await fsp.readFile('./localStorage.json');
+        const localStorageData = JSON.parse(localStorageString);
+        for (const key in localStorageData) {
+          await this.page.evaluate((key, value) => {
+            localStorage.setItem(key, value);
+          }, key, localStorageData[key]);
+        }
+      } catch (error) {
+        console.log('No se encontraron datos de localStorage guardados');
+      }
+
+
+      await this.page.setUserAgent(userAgent);
+      await this.page.goto(goto);
+;
+      await this.page.waitForSelector('textarea', {timeout: 9999999, visible: true});
+
+      await new Promise(r=> setTimeout(r, 500))
+
+      while (await this.page.evaluate(() => !!document.querySelector("*[id*=headlessui-dialog-panel] button"))) {
+        await this.page.click("*[id*=headlessui-dialog-panel] button:last-child")
+        await new Promise(r=> setTimeout(r, 100))
+      }
+
+      const cookies = await this.page.cookies();
+      await fsp.writeFile('./cookies.json', JSON.stringify(cookies));
+      const localStorageData = await this.page.evaluate(() => {
+        const data = {};
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          data[key] = localStorage.getItem(key);
+        }
+        return data;
+      });
+      await fsp.writeFile('./localStorage.json', JSON.stringify(localStorageData));
+
       const hasInyect = await this.page.evaluate("window.inyectOk");
       if (!hasInyect) {
         await this.inyectFile("node_modules/tslib/tslib.js");
         await new Promise((r) => setTimeout(r, 500 + Math.random()));
         await this.inyectFile("src/chats/handlers/inyect/dist/bundle.js");
       }
-      this.exposeFunction();
+      await this.exposeFunction();
+      console.log("AAA")
       return { hasInyect };
     };
     let value: Awaited<ReturnType<typeof connect>>;
@@ -55,30 +115,30 @@ export class BaseHook {
     return value;
   }
 
-  exposeFunction() {
-    this.page.exposeFunction(`promise_ok`, (id, ...args) => {
+ async exposeFunction() {
+    await this.page.exposeFunction(`promise_ok`, (id, ...args) => {
       if (!this.promises[id]) return;
       this.promises[id].r(...args);
       delete this.promises[id];
     });
-    this.page.exposeFunction(`promise_err`, (id, ...args) => {
+    await this.page.exposeFunction(`promise_err`, (id, ...args) => {
       if (!this.promises[id]) return;
       this.promises[id].e(...args);
       delete this.promises[id];
     });
-    this.page.exposeFunction(`page_log`, (...args) => {
+    await this.page.exposeFunction(`page_log`, (...args) => {
       debugLog(...args);
     });
-    this.page.exposeFunction(`page_type`, async (query, text) => {
+    await this.page.exposeFunction(`page_type`, async (query, text) => {
       await this.page.type(query, text);
     });
-    this.page.exposeFunction(`page_click`, async (query) => {
+    await this.page.exposeFunction(`page_click`, async (query) => {
       await this.page.click(query);
     });
-    this.page.exposeFunction(`page_focus`, async (query) => {
+    await this.page.exposeFunction(`page_focus`, async (query) => {
       await this.page.focus(query);
     });
-    this.page.exposeFunction(
+    await this.page.exposeFunction(
       `page_keyboard`,
       //@ts-ignore
       async (text: string, jumpLine = false) => {
@@ -93,7 +153,7 @@ export class BaseHook {
         await this.page.keyboard.type("\n");
       }
     );
-    this.page.exposeFunction(
+    await this.page.exposeFunction(
       `page_live`,
       (msg) => this.stream && this.stream(msg)
     );
