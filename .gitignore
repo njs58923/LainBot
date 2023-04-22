@@ -5,3 +5,6 @@ dist
 memory/**/*
 last_response.json
 build
+
+cookies.json
+localStorage.json

@@ -41,7 +41,6 @@ export class VoiceAndSpeech implements InputSource {
     }
 
     async output(raw: string) {
-        app.logs.print("output", raw)
         speechWorker.speech(raw)
     }
 }
