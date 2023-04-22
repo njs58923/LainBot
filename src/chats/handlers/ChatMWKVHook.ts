@@ -1,3 +1,4 @@
+import { app } from "../..";
 import { GenericChatBot } from "./chatGPTHook";
 import { EventClient } from "./utils/EventClient";
 
@@ -17,11 +18,12 @@ export class PythonManager {
         await new Promise(async complete => {
             while (true) {
                 try {
-                    console.log("Try connect...")
+                    app.logs.print("Try connect...")
+
 
                     await this.socket.start(async () => {
                         await Promise.all(this._onStart.map(e => Promise.resolve(e(this))))
-                        console.log("Conectado!")
+                        app.logs.print("Conectado!")
                         complete(1)
                     });
                 } catch (err) { console.log(err) }

@@ -4,7 +4,7 @@ import { Decoder, ForceStop, InterRes } from "../interactions";
 import { BuildContext } from "../resources/context";
 //@ts-ignore
 import { SampleInits, Samples } from "../resources/samples";
-import { getCircularReplacer, getInput } from "../utils";
+import { getCircularReplacer } from "../utils";
 import { AloneChatResponse } from "./utils/AloneChatResponse";
 import { Roles } from "../resources/utils/Roles";
 import { ChatMWKVHook, PythonManager } from "./handlers/ChatMWKVHook";
@@ -50,53 +50,53 @@ export const ChatMWKV = async () => {
       context: "system",
     });
 
-    const controller = new AloneChatResponse(
-      (msg, _, s) => generateResponse(msg, { stream: s?.stream }),
-      {
-        stream: true,
-        debug: Env.isDebug,
-        roles,
-        forceEndPromp: ForceStop,
-      }
+  const controller = new AloneChatResponse(
+    (msg, _, s) => generateResponse(msg, { stream: s?.stream }),
+    {
+      stream: true,
+      debug: Env.isDebug,
+      roles,
+      forceEndPromp: ForceStop,
+    }
+  );
+
+  const ctx = new BuildContext({
+    context: "simple_chat_corto",
+    roles,
+    samples: Samples.simple(roles).map((m) =>
+      Decoder.parseMessage({
+        role: m.role,
+        content: m.content as InterRes[],
+      })
+    ),
+  });
+
+  const a0 = new PythonManager()
+
+  await api.init({
+    context: await ctx.build_unique_prompt(":"),
+    python: a0
+  });
+
+  const generateResponse = async (message, { stream }) => {
+    try {
+      var response = await api.sendMessage(message, {
+        stop: Decoder.getStop({ roles }),
+        stream,
+      });
+    } catch (error: any) {
+      if (error?.response?.data) console.log(error?.response?.data);
+      else console.log(error);
+      throw error;
+    }
+
+    writeFileSync(
+      "last_response.json",
+      JSON.stringify(response, getCircularReplacer())
     );
 
-    const ctx = new BuildContext({
-      context: "simple_chat_corto",
-      roles,
-      samples: Samples.simple(roles).map((m) =>
-        Decoder.parseMessage({
-          role: m.role,
-          content: m.content as InterRes[],
-        })
-      ),
-    });
-
-    const a0 = new PythonManager()
-
-    await api.init({
-      context: await ctx.build_unique_prompt(":"),
-      python: a0
-    });
-
-    const generateResponse = async (message, {stream}) => {
-      try {
-        var response = await api.sendMessage(message, {
-          stop: Decoder.getStop({ roles }),
-          stream,
-        });
-      } catch (error: any) {
-        if (error?.response?.data) console.log(error?.response?.data);
-        else console.log(error);
-        throw error;
-      }
-    
-      writeFileSync(
-        "last_response.json",
-        JSON.stringify(response, getCircularReplacer())
-      );
-    
-      return response;
-    };
+    return response;
+  };
 
 
   // await controller.tryAutoGenerate(
@@ -106,7 +106,7 @@ export const ChatMWKV = async () => {
   //     })
   //   )
   // );
-  
+
 
   const ux = new VoiceAndSpeech(a0.socket);
 
@@ -118,6 +118,6 @@ export const ChatMWKV = async () => {
     (raw: string) => ux.output(raw)
   );
 
-  await getInput("🟦🟦🟦 FIN 🟦🟦🟦");
+  // await getInput("🟦🟦🟦 FIN 🟦🟦🟦");
 
 };

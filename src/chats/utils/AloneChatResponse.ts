@@ -4,7 +4,7 @@ import { encode } from "gpt-3-encoder";
 import { Env } from "../../environment";
 import { Decoder } from "../../interactions";
 import { Roles } from "../../resources/utils/Roles";
-import { ConsoleUX } from "../../ux/console";
+import { app } from "../..";
 
 export class AloneChatResponse {
   list: Message[] = [];
@@ -48,8 +48,7 @@ export class AloneChatResponse {
       console.log("\n");
       const opt = (
         await getInput(
-          `🔴 Debug: ${
-            encode(m.content).length
+          `🔴 Debug: ${encode(m.content).length
           } tokens \n   1: Omitir\n   2: Editar\n   3: Forzar final\n   4: Reemplazar respuesta\n   5: Capturar ultimo respuesta\n   6: Salir\n  Opciones: `
         )
       )
@@ -70,12 +69,11 @@ export class AloneChatResponse {
       else if (opt) return this.tryGenerate(text);
     }
     this.fistInput = false;
-  
-    let ux = new ConsoleUX()
 
 
-    if(this.hasStream){
-      logMessage({...M(this.roles.v.ai, ""), noEnd: (...args:string[])=> process.stdout.write(args.join(""))})
+
+    if (this.hasStream) {
+      logMessage({ ...M(this.roles.v.ai, ""), noEnd: (...args: string[]) => process.stdout.write(args.join("")) })
       var lastMessage = M(this.roles.v.ai, "");
       this.push(lastMessage);
     }
@@ -83,15 +81,15 @@ export class AloneChatResponse {
       fake ||
       (await this.generate(m.content, this.list, {
         stream: (newPart) => {
-          if(this.hasStream) {
+          if (this.hasStream) {
             process.stdout.write(newPart);
-            lastMessage.content += newPart 
+            lastMessage.content += newPart
           }
-          ux.render(this.list)
+          app.messages.setMessages(this.list)
         },
       }));
 
-      if(!this.hasStream) this.push(M(this.roles.v.ai, r));
+    if (!this.hasStream) this.push(M(this.roles.v.ai, r));
     return r;
   }
 

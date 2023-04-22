@@ -1,21 +1,22 @@
-import { createInterface } from "readline";
+// import { createInterface } from "readline";
 import { Message } from "../resources/context";
 import { Env } from "../environment";
 
-let rl:any;
+let rl: any;
 
 export const getInput = (prompt) => {
-  if(!rl) rl = createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
+  // if(!rl) rl = createInterface({
+  //   input: process.stdin,
+  //   output: process.stdout,
+  // });
 
-  console.log("");
-  return new Promise<string>((resolve) => {
-    rl.question(prompt, (answer) => {
-      resolve(answer.replace(/\\n/g, "\n"));
-    });
-  });
+  // console.log("");
+  // return new Promise<string>((resolve) => {
+  //   rl.question(prompt, (answer) => {
+  //     resolve(answer.replace(/\\n/g, "\n"));
+  //   });
+  // });
+  return Promise.resolve("")
 };
 
 export const getCircularReplacer = () => {
@@ -60,7 +61,8 @@ export const logMessage = ({ role, content, color = 90, noEnd: customLog = conso
   }
 };
 export const inputMessage = ({ role, color = 32 }) => {
-  return getInput(` \x1b[${color}m` + `${role}: `);
+  // return getInput(` \x1b[${color}m` + `${role}: `);
+  return "";
 };
 
 export const M = <R = string, A = string>(

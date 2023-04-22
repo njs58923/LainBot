@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import WebSocket from 'ws';
 import { promisify } from 'util';
 import { EventEmitter } from 'events';
+import { app } from '../../..';
 
 export class EventClient {
   host: string;
@@ -25,14 +26,14 @@ export class EventClient {
   }
 
   async start(onListen: () => void = () => { }) {
-    console.log('Conectando...');
+    app.logs.print('Socket: Conectando...')
 
     while (true) {
       try {
         await this.connect(onListen);
-        console.log('Desconectado!');
+        app.logs.print('Socket: Desconectado!')
       } catch (error) {
-        console.error('Evento critico: ', error);
+        console.error('Socket: Evento critico, ', error);
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
@@ -65,9 +66,9 @@ export class EventClient {
           const event_data = JSON.parse(data.toString());
           const { event, payload, callback } = event_data;
 
-          // console.log("🔹⬇️ event:", event)
-          // console.log("🔹⬇️ callback:", callback)
-          // console.log("🔹⬇️ payload:", payload)
+          // app.logs.print("🔹⬇️ event:", event)
+          // app.logs.print("🔹⬇️ callback:", callback)
+          // app.logs.print("🔹⬇️ payload:", payload)
 
           try {
             if (this.callbacks[event]) {
@@ -77,7 +78,7 @@ export class EventClient {
               const result = await this.eventHandlers[event](payload);
               if (callback) await this.emit(callback, result);
             } else {
-              console.log(`Evento desconocido: ${event}`);
+              app.logs.print(`Evento desconocido: ${event}`);
             }
           } catch (error) {
             console.error('Evento critico: ', error);
@@ -85,16 +86,16 @@ export class EventClient {
         });
 
         this.websocket.on('close', () => {
-          console.log('Conexión cerrada correctamente.');
+          app.logs.print('Conexión cerrada correctamente.');
           connect_close('Conexión cerrada correctamente.');
         });
 
         this.websocket.on('error', (error: Error) => {
-          console.log('Error en la conexión WebSocket:', error);
+          app.logs.print('Error en la conexión WebSocket:', error);
           connect_error(error);
         });
 
-        console.log('🔹 Conectado!');
+        app.logs.print('Socket: Conectado!')
         await this.updateSupportList();
 
         onListen()
