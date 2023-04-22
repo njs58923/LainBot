@@ -1,60 +1,51 @@
+import { fork, ChildProcess } from 'child_process';
 
+class WorkerWrapper {
+  events: any = {}
+  constructor(public worker: ChildProcess) {
+    worker.on('message', ({ event, payload }: any) => {
+      if (!(event in this.events)) return;
+      const { func, del } = this.events[event];
+      func(payload)
+      if (del) delete this.events[event]
+    });
+  }
 
-import mic from 'mic';
-import streamBuffers from 'stream-buffers';
-import ioHook from 'iohook';
+  on(event, func) {
+    this.events[event] = {
+      func,
+      del: false
+    }
+  }
 
-console.log("AAAAAAA")
+  once(event, func) {
+    this.events[event] = {
+      func,
+      del: true
+    }
+  }
 
-const keyToDetect = 65; // Tecla 'a' como ejemplo
-let isRecording = false;
-let micInstance = null;
-let outputStream = null;
-let writableStreamBuffer = null;
-
-function startRecording() {
-  console.log('Comenzando a grabar...');
-  micInstance = mic({rate: '44100', channels: '2', debug: false, fileType: 'wav', device: "Micrófono (3- USB PnP Sound Device)"});
-  outputStream = micInstance.getAudioStream();
-  writableStreamBuffer = new streamBuffers.WritableStreamBuffer();
-
-  outputStream.on('data', (data) => {
-    writableStreamBuffer.write(data);
-  });
-
-  outputStream.on('error', (err) => {
-    console.error('Error en el stream de audio:', err);
-  });
-
-  micInstance.start();
-  isRecording = true;
+  emit(event, payload = undefined) {
+    this.worker.send({ event, payload })
+  }
 }
 
-function stopRecording() {
-  console.log('Deteniendo la grabación...');
-  micInstance.stop();
-  isRecording = false;
+export const RecordWorker = (onResult: (...a: any[]) => void = () => { }) => {
+  const worker = fork('./src/records/worker/index.js');
+  const msg = new WorkerWrapper(worker)
 
-  const audioBuffer = writableStreamBuffer.getContents();
-  const base64Audio = audioBuffer.toString('base64');
-  console.log('Audio en Base64:', base64Audio);
+  msg.on('base64', onResult);
 
-  // Envía el audio en Base64 por la red (por ejemplo, a través de una API)
-  //sendAudio(base64Audio);
-}
-
-ioHook.on('keydown', (event) => {
-  if (event.keycode === keyToDetect && !isRecording) {
-    startRecording();
+  return {
+    start: () => msg.emit('recording-start'),
+    finish: () => msg.emit('recording-stop'),
+    isRecording: () => new Promise(resolve => {
+      msg.once('isRecording', resolve)
+      msg.emit('isRecording')
+    }),
+    status: () => new Promise(resolve => {
+      msg.once('status', resolve)
+      msg.emit('status')
+    })
   }
-});
-
-ioHook.on('keyup', (event) => {
-  if (event.keycode === keyToDetect && isRecording) {
-    stopRecording();
-  }
-});
-
-export const StartKeyListen = ()=>{
-    ioHook.start(true);
 }

@@ -1,0 +1,22 @@
+## corregir problema de sockets al inciar
+1. --se debe de añadir callbacks para eso
+2. --terminar callback
+3. --añadirle los nuevos callback a whisper
+4. revisar porque los callback a la parte de node no llegan parece
+
+## corregir problema del cliente socket que se muere si no hay server
+
+!! Funciones
+- Añadir la posibilidad de cambiar rapido entre chatgpt y otros modelos, o intentarlo
+
+
+
+
+%% Cosas que aprender
+- Vicuña 7B + Lora, training.
+
+
+
+cd "/home/ubuntu/pruebas_con_torch/RWKV/" && conda activate python3.8 && python app.py
+cd "/home/ubuntu/pruebas_con_torch/RWKV/" && conda activate python3.8 && python train_setting.py
+cd "/home/ubuntu/pruebas_con_torch/RWKV/ChatRWKV/v2/" && conda activate python3.8 && python chatServer.py
