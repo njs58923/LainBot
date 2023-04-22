@@ -25,8 +25,8 @@ const generateResponse = async (
       stop: [`\n${roles.v.system}:`, `\n${roles.v.ai}:`],
     });
   } catch (error: any) {
-    if (error.response.data) console.log(error.response.data);
-    else console.log(error);
+    if (error.response.data) app.logs.print(error.response.data);
+    else app.logs.print(error);
     throw error;
   }
 

@@ -9,9 +9,9 @@ export class BingHook extends BaseHook implements GenericChatBot {
       goto: Env.BING_WEB_HOOK,
     });
     if (!hasInyect) {
-      console.log("Loading Page...");
+      app.logs.print("Loading Page...");
       await this.evaluate(`await chatBing.waitLoading()`);
-      console.log("");
+      app.logs.print("");
     }
     return { hasInyect };
   }

@@ -45,7 +45,7 @@ export class AloneChatResponse {
 
     var fake;
     if (this.debug && !this.fistInput) {
-      console.log("\n");
+      app.logs.print("\n");
       const opt = (
         await getInput(
           `🔴 Debug: ${encode(m.content).length
@@ -54,7 +54,7 @@ export class AloneChatResponse {
       )
         .toLocaleLowerCase()
         .trim();
-      console.log("\n");
+      app.logs.print("\n");
 
       if (opt === "1") return undefined;
       else if (opt === "2")
@@ -73,7 +73,6 @@ export class AloneChatResponse {
 
 
     if (this.hasStream) {
-      logMessage({ ...M(this.roles.v.ai, ""), noEnd: (...args: string[]) => process.stdout.write(args.join("")) })
       var lastMessage = M(this.roles.v.ai, "");
       this.push(lastMessage);
     }
@@ -81,10 +80,7 @@ export class AloneChatResponse {
       fake ||
       (await this.generate(m.content, this.list, {
         stream: (newPart) => {
-          if (this.hasStream) {
-            process.stdout.write(newPart);
-            lastMessage.content += newPart
-          }
+          if (this.hasStream) lastMessage.content += newPart
           app.messages.setMessages(this.list)
         },
       }));

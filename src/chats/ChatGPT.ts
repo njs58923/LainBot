@@ -27,8 +27,8 @@ const generateResponse = async (
       stream,
     });
   } catch (error: any) {
-    if (error?.response?.data) console.log(error?.response?.data);
-    else console.log(error);
+    if (error?.response?.data) app.logs.print(error?.response?.data);
+    else app.logs.print(error);
     throw error;
   }
 
@@ -65,6 +65,7 @@ export const ChatGPT = async () => {
     (msg, _, s) => generateResponse(msg, { roles, stream: s?.stream }),
     {
       debug: Env.isDebug,
+      stream: true,
       roles,
       forceEndPromp: ForceStop,
     }
@@ -89,19 +90,17 @@ export const ChatGPT = async () => {
   //   )
   // );
 
-  const a0 = new PythonManager()
+  const services = new PythonManager()
 
-  const a1 = new VoiceAndSpeech(a0.socket)
+  const ui = new VoiceAndSpeech(services.socket);
 
-  // const a2 = new InputInteractions(a1,ctx, "#")
-
-  await a0.start()
+  await services.start()
 
   await controller.tryLoopInput(
-    () => a1.input(),
-    (raw: string) => a1.output(raw)
+    () => ui.input(),
+    (raw: string) => ui.output(raw)
   );
-  
+
   await getInput("🟦🟦🟦 FIN 🟦🟦🟦");
 
   process.exit(0);

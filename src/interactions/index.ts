@@ -40,7 +40,7 @@ export const Interactions = ({
   "ia.init": () => {
     return { status: "OK" };
   },
-  "ia.wait": async ({}) => {
+  "ia.wait": async ({ }) => {
     await new Promise((c) => setTimeout(c, 100));
     return {
       type: "user.request",
@@ -48,7 +48,7 @@ export const Interactions = ({
     };
   },
   "user.request": async ({ message }) => {
-    console.log("");
+    app.logs.print("");
     logMessage({ role: roles.v.ai, content: message, color: 92 });
     await new Promise((c) => setTimeout(c, 100));
     return {
@@ -57,7 +57,7 @@ export const Interactions = ({
     };
   },
   "user.response": async ({ message }) => {
-    console.log("");
+    app.logs.print("");
     logMessage({ role: roles.v.ai, content: message, color: 92 });
     await new Promise((c) => setTimeout(c, 100));
     return {
@@ -66,7 +66,7 @@ export const Interactions = ({
     };
   },
   "user.failed": async ({ message }) => {
-    console.log("");
+    app.logs.print("");
     logMessage({ role: roles.v.ai, content: message, color: 91 });
     await new Promise((c) => setTimeout(c, 100));
     return {
@@ -75,7 +75,7 @@ export const Interactions = ({
     };
   },
   "user.report": ({ message }) => {
-    console.log("");
+    app.logs.print("");
     logMessage({ role: roles.v.ai, content: message, color: 96 });
     return {};
   },
@@ -84,8 +84,8 @@ export const Interactions = ({
       process.platform == "darwin"
         ? "open"
         : process.platform == "win32"
-        ? "start"
-        : "xdg-open";
+          ? "start"
+          : "xdg-open";
     require("child_process").exec(start + " " + url);
     return {};
   },

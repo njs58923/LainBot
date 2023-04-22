@@ -5,7 +5,7 @@ export class Console {
     lastRender = null;
     constructor() {
         process.stdout.on('resize', () => {
-            console.log('Tamaño de la consola actualizado:', this.getConsoleSize());
+            app.logs.print('Tamaño de la consola actualizado:', this.getConsoleSize());
         });
     }
 

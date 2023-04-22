@@ -15,11 +15,16 @@ export const RecordingEvent = (onAudio: (raw: string) => void = () => { }) => {
   process.stdin.setRawMode(true);
   // readline.emitKeypressEvents(process.stdin);
 
-  const worker = RecordWorker(onAudio);
+  const worker = RecordWorker((b64) => {
+    onAudio(b64)
+    app.logs.print(`Audio ${b64.length} bytes`)
+  });
 
   app.screen.key("a", async () => {
-    if (!(await worker.isRecording()))
+    if (!(await worker.isRecording())) {
+      app.logs.print("Grabando audio...")
       worker.start();
+    }
     else if ((await worker.isRecording()))
       worker.finish();
   })
@@ -35,5 +40,5 @@ export const RecordingEvent = (onAudio: (raw: string) => void = () => { }) => {
   //   if (key && key.ctrl && key.name === 'c') process.exit();
   // });
 
-  // console.log(`Presiona y suelta la tecla '${keyToDetect}' para grabar y detener la grabación. Para salir, presiona CTRL+C.`);
+  // app.logs.print(`Presiona y suelta la tecla '${keyToDetect}' para grabar y detener la grabación. Para salir, presiona CTRL+C.`);
 }

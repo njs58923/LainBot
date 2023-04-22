@@ -19,8 +19,22 @@ export class LogsPanel extends BoxElement {
                 },
                 hover: {
                     bg: 'green'
-                }
+                },
+                focus: {
+                    border: {
+                        fg: 'red',
+                    },
+                },
             },
+            scrollbar: {
+                ch: ' ',
+                inverse: true,
+            } as any,
+            scrollable: true,
+            alwaysScroll: true,
+            keys: true,
+            vi: true,
+            mouse: true,
             ...options
         })
 
@@ -29,12 +43,12 @@ export class LogsPanel extends BoxElement {
         //     this.render();
         // });
 
-        this.key('enter', function (ch, key) {
-            this.setContent('{right}Even different {black-fg}content{/black-fg}.{/right}\n');
-            this.setLine(1, 'bar');
-            this.insertLine(1, 'foo');
-            this.render();
-        });
+        // this.key('enter', (ch, key) => {
+        //     this.setContent('{right}Even different {black-fg}content{/black-fg}.{/right}\n');
+        //     this.setLine(1, 'bar');
+        //     this.insertLine(1, 'foo');
+        //     this.screen.render();
+        // });
     }
 
     logs: { value: string, createAt: number }[] = []
@@ -50,6 +64,7 @@ export class LogsPanel extends BoxElement {
 
         this.logs.push({ value, createAt: Date.now() })
         this.setContent(this.logs.map(i => `${new Date(i.createAt).toLocaleString()}: ${i.value}`).join("\n"))
+        this.setScrollPerc(100);
         this.screen.render()
     }
 }

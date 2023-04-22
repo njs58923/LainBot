@@ -10,7 +10,7 @@ export const getInput = (prompt) => {
   //   output: process.stdout,
   // });
 
-  // console.log("");
+  // app.logs.print("");
   // return new Promise<string>((resolve) => {
   //   rl.question(prompt, (answer) => {
   //     resolve(answer.replace(/\\n/g, "\n"));
@@ -36,7 +36,7 @@ export const debugLog = (...args) => {
   if (Env.isDebug) LogColor(90, ...args);
 };
 export const LogColor = (color, ...args) => {
-  console.log(`\x1b[${color}m`, ...args, "\x1b[0m");
+  app.logs.print(`\x1b[${color}m`, ...args, "\x1b[0m");
 };
 
 export const logMessage = ({ role, content, color = 90, noEnd: customLog = console.log }) => {
@@ -97,7 +97,7 @@ export function extractObjects(str) {
       if (stack.length === 0 && startIdx !== -1) {
         let jsonString = str.slice(startIdx, i + 1);
         try {
-          // if (Environment.isDebug) console.log("🟦", jsonString);
+          // if (Environment.isDebug) app.logs.print("🟦", jsonString);
           let obj = JSON.parse(jsonString);
           objects.push(obj);
         } catch (error) {

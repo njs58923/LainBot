@@ -10,7 +10,7 @@ var interaction_debug = async () => {
       noInput: false,
     });
     logMessage(M("#TEST", result));
-    console.log("\n");
+    app.logs.print("\n");
   }
 };
 

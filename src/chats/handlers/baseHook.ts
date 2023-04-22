@@ -4,7 +4,7 @@ import { debugLog } from "../../utils";
 const fsp = require('fs').promises;
 
 export class BaseHook {
-  constructor(public setting: { port: number }) {}
+  constructor(public setting: { port: number }) { }
   browser: Browser = undefined as any;
   page: Page = undefined as any;
 
@@ -17,46 +17,49 @@ export class BaseHook {
         document.head.appendChild(script);
       }, tslibContent)
       .catch((e) => {
-        console.log(e);
+        app.logs.print(e);
         throw e;
       });
   }
 
   async createConnection({ browserURL, goto }) {
-    console.log(browserURL)
+    app.logs.print(browserURL)
 
     const userAgent =
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36 Edg/113.0.1774.9';
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36 Edg/113.0.1774.9';
 
     const connect = async () => {
-      this.browser = await puppeteer.launch({ headless: false, args: [
-        '--disable-blink-features=AutomationControlled', // Desactiva la función de control de automatización
-        '--no-sandbox', // Desactiva el modo de aislamiento del proceso
-        '--disable-setuid-sandbox', // Desactiva el aislamiento basado en el usuario
-      ] });
+      this.browser = await puppeteer.launch({
+        headless: false, args: [
+          '--disable-blink-features=AutomationControlled', // Desactiva la función de control de automatización
+          '--no-sandbox', // Desactiva el modo de aislamiento del proceso
+          '--disable-setuid-sandbox', // Desactiva el aislamiento basado en el usuario
+        ]
+      });
       this.page = await this.browser.newPage();
-      
+
       process.on('SIGINT', () => {
-        console.log('SIGINT recibido. Cerrando el navegador...');
+        app.logs.print('SIGINT recibido. Cerrando el navegador...');
         this.page.close().then(() => {
           process.exit(0);
         });
       });
 
       process.on('SIGTERM', () => {
-        console.log('SIGTERM recibido. Cerrando el navegador...');
+        app.logs.print('SIGTERM recibido. Cerrando el navegador...');
         this.page.close().then(() => {
           process.exit(0);
         });
       });
-  
+
       try {
         const cookiesString = await fsp.readFile('./cookies.json');
         const cookies = JSON.parse(cookiesString);
         await this.page.setCookie(...cookies);
       } catch (error) {
-        console.log('No se encontraron cookies guardadas');
+        app.logs.print('No se encontraron cookies guardadas');
       }
+
       // Carga el localStorage guardado previamente, si existe
       try {
         const localStorageString = await fsp.readFile('./localStorage.json');
@@ -67,20 +70,20 @@ export class BaseHook {
           }, key, localStorageData[key]);
         }
       } catch (error) {
-        console.log('No se encontraron datos de localStorage guardados');
+        app.logs.print('No se encontraron datos de localStorage guardados');
       }
 
 
       await this.page.setUserAgent(userAgent);
       await this.page.goto(goto);
-;
-      await this.page.waitForSelector('textarea', {timeout: 9999999, visible: true});
+      ;
+      await this.page.waitForSelector('textarea', { timeout: 9999999, visible: true });
 
-      await new Promise(r=> setTimeout(r, 500))
+      await new Promise(r => setTimeout(r, 500))
 
       while (await this.page.evaluate(() => !!document.querySelector("*[id*=headlessui-dialog-panel] button"))) {
         await this.page.click("*[id*=headlessui-dialog-panel] button:last-child")
-        await new Promise(r=> setTimeout(r, 100))
+        await new Promise(r => setTimeout(r, 100))
       }
 
       const cookies = await this.page.cookies();
@@ -102,20 +105,18 @@ export class BaseHook {
         await this.inyectFile("src/chats/handlers/inyect/dist/bundle.js");
       }
       await this.exposeFunction();
-      console.log("AAA")
       return { hasInyect };
     };
     let value: Awaited<ReturnType<typeof connect>>;
     while (true) {
-      console.log("Conectado...");
+      app.logs.print("Conectado...");
       value = await connect();
       break;
     }
-    console.log("");
     return value;
   }
 
- async exposeFunction() {
+  async exposeFunction() {
     await this.page.exposeFunction(`promise_ok`, (id, ...args) => {
       if (!this.promises[id]) return;
       this.promises[id].r(...args);
@@ -174,8 +175,8 @@ export class BaseHook {
         let _eval = (${script});
         if(typeof _eval === "function"){
             Promise.resolve(_eval(...JSON.parse(decodeURIComponent("${encodeURIComponent(
-              JSON.stringify(args)
-            )}"))))
+        JSON.stringify(args)
+      )}"))))
             .then((...args)=> promise_ok("${id}", ...args))
             .catch((...args)=> promise_err("${id}", ...args))
         }else{

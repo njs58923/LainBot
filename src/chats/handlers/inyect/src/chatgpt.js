@@ -84,16 +84,27 @@ const sendInput = async (content, { stop = [] }) => {
   await new Promise((r) => setTimeout(r, 10 + Math.random()));
   page_keyboard(content, true);
 
-  let isStop = await await new Promise((c) => {
+  let lastline = "";
+
+  let isStop = await new Promise((c) => {
     let runing = true;
+
     (async () => {
       await new Promise((r) => setTimeout(r, 25));
       while (runing) {
-        let msg = getLastMessage();
-        if (stop.some((s) => msg.includes(s))) {
-          if (stopButton()) c(true);
+        try {
+          let msg = getLastMessage();
+          if (stop.some((s) => msg.includes(s))) {
+            if (stopButton()) {
+              runing = false;
+              return c(true);
+            }
+          }
+          page_live(msg.slice(lastline.length));
+          lastline = msg;
+        } catch (error) {
+          console.log(error)
         }
-        page_live(msg);
         await new Promise((r) => setTimeout(r, 25));
       }
     })();
@@ -106,7 +117,9 @@ const sendInput = async (content, { stop = [] }) => {
     })();
   });
 
-  return getLastMessage();
+  let endMessage = getLastMessage()
+  page_live(endMessage.slice(lastline.length))
+  return endMessage;
 };
 
 const waitLoading = async () => {

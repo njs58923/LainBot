@@ -18,15 +18,12 @@ export class PythonManager {
         await new Promise(async complete => {
             while (true) {
                 try {
-                    app.logs.print("Try connect...")
-
-
                     await this.socket.start(async () => {
                         await Promise.all(this._onStart.map(e => Promise.resolve(e(this))))
                         app.logs.print("Conectado!")
                         complete(1)
                     });
-                } catch (err) { console.log(err) }
+                } catch (err) { app.logs.print(err) }
                 await new Promise(rr => setTimeout(rr, 1))
             }
         })

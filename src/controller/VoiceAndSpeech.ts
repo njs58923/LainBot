@@ -23,13 +23,14 @@ export class VoiceAndSpeech implements InputSource {
             const list = await client.emit("support_list", undefined) as string[]
             const notFound = ["audio", "sendMessage"].filter(n => !list.includes(n))
             if (notFound.length > 0) {
-                console.log("Faltan los siguientes recursos " + notFound.join(", "))
+                app.logs.print("Faltan los siguientes recursos " + notFound.join(", "))
                 return;
             }
             const value: AutoText = await client.emit("audio", base64Data)
             let message = value.segments.map(i => i.text).join("\n");
-            console.log("")
-            console.log(" Whisper: " + message)
+
+            app.logs.print(`Audio a texto -> ${message}`)
+
             if (this.WaitMessage) this.WaitMessage(message)
         })
     }
@@ -40,6 +41,7 @@ export class VoiceAndSpeech implements InputSource {
     }
 
     async output(raw: string) {
+        app.logs.print("output", raw)
         speechWorker.speech(raw)
     }
 }

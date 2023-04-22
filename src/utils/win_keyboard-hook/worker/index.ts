@@ -16,5 +16,5 @@ keyListener(null, (error, result) => {
   if (error) {
     console.error(error);
   }
-  console.log(result);
+  app.logs.print(result);
 });

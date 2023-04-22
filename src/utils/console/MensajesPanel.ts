@@ -19,8 +19,22 @@ export class MensajesPanel extends BoxElement {
                 },
                 hover: {
                     bg: 'green'
-                }
+                },
+                focus: {
+                    border: {
+                        fg: 'red',
+                    },
+                },
             },
+            scrollbar: {
+                ch: ' ',
+                inverse: true,
+            } as any,
+            scrollable: true,
+            alwaysScroll: true,
+            keys: true,
+            vi: true,
+            mouse: true,
             ...options
         })
 
@@ -29,24 +43,26 @@ export class MensajesPanel extends BoxElement {
         //     this.render();
         // });
 
-        this.key('enter', function (ch, key) {
-            this.setContent('{right}Even different {black-fg}content{/black-fg}.{/right}\n');
-            this.setLine(1, 'bar');
-            this.insertLine(1, 'foo');
-            this.render();
-        });
+        // this.key('enter', function (ch, key) {
+        //     this.setContent('{right}Even different {black-fg}content{/black-fg}.{/right}\n');
+        //     this.setLine(1, 'bar');
+        //     this.insertLine(1, 'foo');
+        //     this.render();
+        // });
     }
 
     setMessages(message: Message[]) {
         let render = "";
-        render += "# Mensajes"
-        render += "\n\n"
         message.forEach((m, i) => {
-            if ((i + 1) % 2) render += "\n"
-            if (i != 0) render += "\n"
-            render += `${m.role}: ${m.content}`
+            if (i != 0) {
+                render += "\n"
+                if ((i + 1) % 2) render += "\n"
+            }
+            render += `${m.role.trim()}: ${m.content.trim()}`
         })
         this.setContent(render)
+        this.setScrollPerc(100);
+        this.render()
         this.screen.render()
     }
 }

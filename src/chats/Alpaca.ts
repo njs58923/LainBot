@@ -16,8 +16,8 @@ const generateResponse = async (message: string) => {
   try {
     var response = "aaa";
   } catch (error: any) {
-    if (error?.response?.data) console.log(error?.response?.data);
-    else console.log(error);
+    if (error?.response?.data) app.logs.print(error?.response?.data);
+    else app.logs.print(error);
     throw error;
   }
 
@@ -59,8 +59,8 @@ export const Alpaca = async () => {
   );
 
   initMessages.forEach((i, ix) => {
-    if (ix > 0) console.log("");
-    console.log(i);
+    if (ix > 0) app.logs.print("");
+    app.logs.print(i);
   });
 
   process.exit(0);

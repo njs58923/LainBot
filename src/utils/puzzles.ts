@@ -32,7 +32,7 @@
 
   const operationCount = 1; // cantidad de operaciones a generar
   const patterns = generatePatterns(operationCount);
-  console.log(patterns);
+  app.logs.print(patterns);
 
   //############
 
@@ -84,5 +84,5 @@
 
   const maxNumber = 5; // El número máximo que se utilizará en las secuencias
   const puzzles = generatePuzzles(1, maxNumber, patterns);
-  console.log(puzzles);
+  app.logs.print(puzzles);
 })();

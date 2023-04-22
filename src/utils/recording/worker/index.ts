@@ -11,7 +11,6 @@ let outputStream = null;
 let writableStreamBuffer = null;
 
 msg.on('recording-start', () => {
-  process.stdout.write("[-")
   micInstance = mic({ rate: '44100', channels: '1', debug: false, fileType: 'wav', device: "Micrófono (3- USB PnP Sound Device)" });
   outputStream = micInstance.getAudioStream();
   writableStreamBuffer = new streamBuffers.WritableStreamBuffer();
@@ -29,7 +28,6 @@ msg.on('recording-start', () => {
 });
 
 msg.on('recording-stop', () => {
-  process.stdout.write("]")
   micInstance.stop();
   isRecording = false;
 

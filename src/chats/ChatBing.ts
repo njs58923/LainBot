@@ -22,8 +22,8 @@ const generateResponse = async (message: string) => {
   try {
     var response = await api.sendMessage(message);
   } catch (error: any) {
-    if (error?.response?.data) console.log(error?.response?.data);
-    else console.log(error);
+    if (error?.response?.data) app.logs.print(error?.response?.data);
+    else app.logs.print(error);
     throw error;
   }
 

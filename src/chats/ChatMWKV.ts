@@ -71,11 +71,11 @@ export const ChatMWKV = async () => {
     ),
   });
 
-  const a0 = new PythonManager()
+  const services = new PythonManager()
 
   await api.init({
     context: await ctx.build_unique_prompt(":"),
-    python: a0
+    python: services
   });
 
   const generateResponse = async (message, { stream }) => {
@@ -85,8 +85,8 @@ export const ChatMWKV = async () => {
         stream,
       });
     } catch (error: any) {
-      if (error?.response?.data) console.log(error?.response?.data);
-      else console.log(error);
+      if (error?.response?.data) app.logs.print(error?.response?.data);
+      else app.logs.print(error);
       throw error;
     }
 
@@ -108,14 +108,13 @@ export const ChatMWKV = async () => {
   // );
 
 
-  const ux = new VoiceAndSpeech(a0.socket);
+  const ui = new VoiceAndSpeech(services.socket);
 
-  await a0.start()
+  await services.start()
 
   await controller.tryLoopInput(
-    () => ux.input(),
-    //@ts-ignore
-    (raw: string) => ux.output(raw)
+    () => ui.input(),
+    (raw: string) => ui.output(raw)
   );
 
   // await getInput("🟦🟦🟦 FIN 🟦🟦🟦");
