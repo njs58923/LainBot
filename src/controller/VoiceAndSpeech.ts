@@ -2,18 +2,22 @@ import { Speech } from "../Speech";
 import { AutoText } from "../chats/ChatMWKV";
 import { EventClient } from "../chats/handlers/utils/EventClient";
 import { Decoder } from "../interactions";
-import { RecordingEvent } from "../records/index2";
 import { BuildContext } from "../resources/context";
 import { M } from "../utils";
+import { RecordingEvent } from "../utils/recording";
+import { SpeechWorker } from "../utils/win_speech/worker";
 
 export interface InputSource {
     input(): Promise<string>
     output(raw: string): Promise<void>
 }
 
+const speechWorker = new SpeechWorker();
+
 export class VoiceAndSpeech implements InputSource {
     WaitMessage: (msg: string) => void;
     constructor(public client: EventClient) {
+
 
         RecordingEvent(async (base64Data) => {
             // inputMessage({ role: "You" })
@@ -37,7 +41,7 @@ export class VoiceAndSpeech implements InputSource {
     }
 
     async output(raw: string) {
-        Speech(raw)
+        speechWorker.speech(raw)
     }
 }
 

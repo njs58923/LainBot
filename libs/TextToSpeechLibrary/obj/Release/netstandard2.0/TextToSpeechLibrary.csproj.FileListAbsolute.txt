@@ -1,9 +1,0 @@
-C:\Mis cosas\Proyectos IA\Lain\libs\TextToSpeechLibrary\bin\Release\netstandard2.0\TextToSpeechLibrary.deps.json
-C:\Mis cosas\Proyectos IA\Lain\libs\TextToSpeechLibrary\bin\Release\netstandard2.0\TextToSpeechLibrary.dll
-C:\Mis cosas\Proyectos IA\Lain\libs\TextToSpeechLibrary\bin\Release\netstandard2.0\TextToSpeechLibrary.pdb
-C:\Mis cosas\Proyectos IA\Lain\libs\TextToSpeechLibrary\obj\Release\netstandard2.0\TextToSpeechLibrary.GeneratedMSBuildEditorConfig.editorconfig
-C:\Mis cosas\Proyectos IA\Lain\libs\TextToSpeechLibrary\obj\Release\netstandard2.0\TextToSpeechLibrary.AssemblyInfoInputs.cache
-C:\Mis cosas\Proyectos IA\Lain\libs\TextToSpeechLibrary\obj\Release\netstandard2.0\TextToSpeechLibrary.AssemblyInfo.cs
-C:\Mis cosas\Proyectos IA\Lain\libs\TextToSpeechLibrary\obj\Release\netstandard2.0\TextToSpeechLibrary.csproj.CoreCompileInputs.cache
-C:\Mis cosas\Proyectos IA\Lain\libs\TextToSpeechLibrary\obj\Release\netstandard2.0\TextToSpeechLibrary.dll
-C:\Mis cosas\Proyectos IA\Lain\libs\TextToSpeechLibrary\obj\Release\netstandard2.0\TextToSpeechLibrary.pdb

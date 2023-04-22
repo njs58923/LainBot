@@ -1,40 +1,10 @@
 
-const mic = require('mic');
-const streamBuffers = require('stream-buffers');
-const { parentPort } = require('worker_threads');
+import mic from 'mic';
+import streamBuffers from 'stream-buffers';
+import { parentPort } from 'worker_threads';
+import { WorkerWrapper } from '../../WorkerWrapper';
 
-class WorkerWrapper {
-  events = {}
-  worker = undefined
-  constructor(worker) {
-    this.worker = worker;
-    process.on('message', ({ event, payload }) => {
-      const { func, del } = this.events[event];
-      func()
-      if (del) delete this.events[event]
-    });
-  }
-
-  on(event, func) {
-    this.events[event] = {
-      func,
-      del: false
-    }
-  }
-
-  once(event, func) {
-    this.events[event] = {
-      func,
-      del: true
-    }
-  }
-
-  emit(event, payload = undefined) {
-    process.send({ event, payload })
-  }
-}
-
-const msg = new WorkerWrapper(parentPort)
+const msg = new WorkerWrapper(process)
 
 let isRecording = false;
 let micInstance = null;

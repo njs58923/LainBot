@@ -1,5 +1,5 @@
 import readline from 'readline';
-import { RecordWorker } from '.';
+import { RecordWorker } from './worker';
 
 export const RecordingEvent = (onAudio: (raw: string) => void = () => { }) => {
   const keyToDetect = 'a';

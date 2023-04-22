@@ -20,3 +20,6 @@
 cd "/home/ubuntu/pruebas_con_torch/RWKV/" && conda activate python3.8 && python app.py
 cd "/home/ubuntu/pruebas_con_torch/RWKV/" && conda activate python3.8 && python train_setting.py
 cd "/home/ubuntu/pruebas_con_torch/RWKV/ChatRWKV/v2/" && conda activate python3.8 && python chatServer.py
+cd "/home/ubuntu/pruebas_con_torch/RWKV/whisper" && conda activate python3.8 && python main.py
+
+sudo mount --bind /mnt/d/Mis_cosas/WSL/.cache/hub/models--guillaumekln--faster-whisper-medium ~/.cache/huggingface/hub/models--guillaumekln--faster-whisper-medium
