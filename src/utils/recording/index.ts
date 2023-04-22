@@ -1,5 +1,6 @@
 import readline from 'readline';
 import { RecordWorker } from './worker';
+import { KeyboardHookWorker } from '../win_keyboard-hook/worker';
 
 export const RecordingEvent = (onAudio: (raw: string) => void = () => { }) => {
   const keyToDetect = 'a';
@@ -15,11 +16,8 @@ export const RecordingEvent = (onAudio: (raw: string) => void = () => { }) => {
 
   const worker = RecordWorker(onAudio);
 
-  // setInterval(() => {
-  //   process.stdout.write(".")
-  // }, 1000)
+  // new KeyboardHookWorker()
 
-  //@ts-ignore
   process.stdin.on('keypress', async (str, key) => {
     if (key.name === keyToDetect && !(await worker.isRecording()))
       worker.start();

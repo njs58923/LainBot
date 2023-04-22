@@ -1,7 +1,6 @@
 
 import mic from 'mic';
 import streamBuffers from 'stream-buffers';
-import { parentPort } from 'worker_threads';
 import { WorkerWrapper } from '../../WorkerWrapper';
 
 const msg = new WorkerWrapper(process)

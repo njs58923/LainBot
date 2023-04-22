@@ -1,4 +1,3 @@
-import { Speech } from "../Speech";
 import { AutoText } from "../chats/ChatMWKV";
 import { EventClient } from "../chats/handlers/utils/EventClient";
 import { Decoder } from "../interactions";

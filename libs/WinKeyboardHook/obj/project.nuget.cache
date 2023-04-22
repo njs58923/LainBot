@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "hXToNhwULo4Wxqbhr+KpWfRM9mtCPFc5SQrk3sDu7KYUx8RDboE8GZXxlcb/MVD0fuXr1TL8/zr4W2XNfX6ADQ==",
+  "success": true,
+  "projectFilePath": "C:\\Mis cosas\\Proyectos IA\\Lain\\libs\\WinKeyboardHook\\WinKeyboardHook.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\samab\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
